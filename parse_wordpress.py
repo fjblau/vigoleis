@@ -36,52 +36,82 @@ class WordPressToSanity:
         hash_obj = hashlib.md5(f"{type_name}-{identifier}".encode())
         return hash_obj.hexdigest()[:24]
     
-    def html_to_portable_text(self, html: str) -> List[Dict[str, Any]]:
+    def html_to_portable_text(self, html: str, title: str = '') -> List[Dict[str, Any]]:
         """Convert HTML to Sanity Portable Text format"""
         if not html or not html.strip():
             return []
         
         soup = BeautifulSoup(html, 'html5lib')
+        
+        text = soup.get_text('\n')
+        lines = text.split('\n')
+        
+        content_start = 0
+        for i, line in enumerate(lines):
+            line_stripped = line.strip()
+            
+            if line_stripped.startswith('·') and title and title in line_stripped:
+                j = i + 1
+                while j < len(lines) and not lines[j].strip():
+                    j += 1
+                if j < len(lines) and re.match(r'\d{2}\.\d{2}\.\d{4}', lines[j].strip()):
+                    content_start = j + 1
+                    while content_start < len(lines) and not lines[content_start].strip():
+                        content_start += 1
+                    break
+        
+        if content_start == 0:
+            content_start = 0
+        
+        content_lines = lines[content_start:]
+        
+        paragraphs = []
+        current_para = []
+        
+        for line in content_lines:
+            line = line.strip()
+            
+            if not line:
+                if current_para:
+                    para_text = ' '.join(current_para)
+                    if para_text and not self._is_navigation_text(para_text):
+                        paragraphs.append(para_text)
+                    current_para = []
+            elif not self._is_navigation_text(line):
+                current_para.append(line)
+        
+        if current_para:
+            para_text = ' '.join(current_para)
+            if para_text and not self._is_navigation_text(para_text):
+                paragraphs.append(para_text)
+        
         blocks = []
-        
-        for element in soup.find('body').children if soup.find('body') else []:
-            if element.name is None:
-                text = str(element).strip()
-                if text:
-                    blocks.append(self._create_text_block(text))
-            elif element.name == 'p':
-                text = element.get_text().strip()
-                if text:
-                    blocks.append(self._create_text_block(text))
-            elif element.name in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
-                text = element.get_text().strip()
-                if text:
-                    level = int(element.name[1])
-                    blocks.append(self._create_heading_block(text, level))
-            elif element.name == 'ul':
-                items = [li.get_text().strip() for li in element.find_all('li') if li.get_text().strip()]
-                if items:
-                    blocks.extend(self._create_list_blocks(items, 'bullet'))
-            elif element.name == 'ol':
-                items = [li.get_text().strip() for li in element.find_all('li') if li.get_text().strip()]
-                if items:
-                    blocks.extend(self._create_list_blocks(items, 'number'))
-            elif element.name == 'br':
-                continue
-            else:
-                text = element.get_text().strip()
-                if text:
-                    blocks.append(self._create_text_block(text))
-        
-        if not blocks:
-            text = soup.get_text().strip()
-            if text:
-                for paragraph in text.split('\n\n'):
-                    paragraph = paragraph.strip()
-                    if paragraph:
-                        blocks.append(self._create_text_block(paragraph))
+        for para in paragraphs:
+            if para:
+                blocks.append(self._create_text_block(para))
         
         return blocks if blocks else [self._create_text_block("")]
+    
+    def _is_navigation_text(self, text: str) -> bool:
+        """Check if text is navigation/pagination content"""
+        text = text.strip()
+        
+        if not text or len(text) > 500:
+            return False
+        
+        if text in ['•', '·', '›', '»', '«', '‹']:
+            return True
+        
+        if re.match(r'^[\d\s›»«‹\[\]]+$', text):
+            return True
+        
+        if text.startswith('Mehr:') or text.startswith('[') and text.endswith(']'):
+            return True
+        
+        if re.match(r'^\d{2}\.\d{2}\.\d{4}$', text):
+            return True
+        
+        return False
     
     def _create_text_block(self, text: str, style: str = 'normal') -> Dict[str, Any]:
         """Create a standard text block"""
@@ -224,7 +254,7 @@ class WordPressToSanity:
         if author_name not in self.authors:
             self.authors[author_name] = self.create_author_document(author_name)
         
-        content_blocks = self.html_to_portable_text(content_html)
+        content_blocks = self.html_to_portable_text(content_html, title)
         
         excerpt_elem = item.find('excerpt:encoded', self.WP_NS)
         excerpt = excerpt_elem.text if excerpt_elem is not None and excerpt_elem.text else ''
