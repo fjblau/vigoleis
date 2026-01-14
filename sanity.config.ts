@@ -18,6 +18,7 @@ import category from "@/sanity/schemas/documents/category";
 import post from "@/sanity/schemas/documents/post";
 import settings from "@/sanity/schemas/singletons/settings";
 import dictionary from "@/sanity/schemas/singletons/dictionary";
+import linksEphemera from "@/sanity/schemas/singletons/linksEphemera";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -33,6 +34,7 @@ export default defineConfig({
     types: [
       settings,
       dictionary,
+      linksEphemera,
       post,
       author,
       category,
@@ -72,8 +74,8 @@ export default defineConfig({
       },
       previewUrl: { previewMode: { enable: "/api/draft-mode/enable" } },
     }),
-    structureTool({ structure: pageStructure([settings, dictionary]) }),
-    singletonPlugin([settings.name, dictionary.name]),
+    structureTool({ structure: pageStructure([settings, dictionary, linksEphemera]) }),
+    singletonPlugin([settings.name, dictionary.name, linksEphemera.name]),
     unsplashImageAsset(),
     assistWithPresets(),
     process.env.NODE_ENV === "development" &&
