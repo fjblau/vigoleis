@@ -4,6 +4,8 @@ export const settingsQuery = defineQuery(`*[_type == "settings"][0]`);
 
 export const dictionaryQuery = defineQuery(`*[_type == "dictionary"][0]`);
 
+export const linksEphemeraQuery = defineQuery(`*[_type == "linksEphemera"][0]`);
+
 const postFields = /* groq */ `
   _id,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),
