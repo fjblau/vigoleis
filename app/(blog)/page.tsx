@@ -56,9 +56,6 @@ export default async function Page() {
             />
           </div>
           <div>
-            <h2 className="mb-6 text-4xl font-bold leading-tight lg:text-5xl">
-              Albert Vigoleis Thelen (1903-1989)
-            </h2>
             <div className="prose prose-lg">
               <p className="text-lg leading-relaxed">
                 Albert Vigoleis Thelen war ein deutscher Schriftsteller, Übersetzer und Dichter, 
