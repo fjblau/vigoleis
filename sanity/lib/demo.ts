@@ -2,7 +2,7 @@
  * Demo data used as placeholders and initial values for the blog
  */
 
-export const title = "Albert Vigoleis Thelen";
+export const title = "Albert Vigoleis Thelen (1903-1989)";
 
 export const description = [
   {
