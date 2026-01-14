@@ -16,7 +16,7 @@ export default function Header() {
               priority
             />
           </Link>
-          <ul className="flex gap-6 text-sm font-medium">
+          <ul className="flex gap-6 text-lg font-medium">
             <li>
               <Link
                 href="/"
