@@ -18,7 +18,7 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Technical Specification
+### [x] Step: Technical Specification
 <!-- chat-id: 8bfcff7d-3e71-45d8-8b92-cdc905009301 -->
 
 Assess the task's difficulty, as underestimating it leads to poor outcomes.
@@ -51,15 +51,40 @@ Save to `{@artifacts_path}/plan.md`. If the feature is trivial and doesn't warra
 
 ---
 
-### [ ] Step: Implementation
+### [ ] Step: Foundation Setup
 
-Implement the task according to the technical specification and general engineering best practices.
+1. Select and deploy appropriate Vercel template (blog/portfolio/commerce)
+2. Customize branding (colors, fonts, author theme)
+3. Set up basic page structure and navigation
+4. Verify: Site deploys successfully and is responsive
 
-1. Break the task into steps where possible.
-2. Implement the required changes in the codebase.
-3. Add and run relevant tests and linters.
-4. Perform basic manual verification if applicable.
-5. After completion, write a report to `{@artifacts_path}/report.md` describing:
+---
+
+### [ ] Step: Content Features Implementation
+
+1. Configure news/articles section with categories and tags
+2. Build photo gallery with grid layout and lightbox
+3. Create links/resources page for ephemera
+4. Verify: All content sections render correctly and are navigable
+
+---
+
+### [ ] Step: E-commerce Integration
+
+1. Integrate Shopify or Stripe for memorabilia sales
+2. Set up product catalog and shopping cart
+3. Configure checkout and payment flow
+4. Verify: Complete purchase flow works end-to-end
+
+---
+
+### [ ] Step: Polish & Deployment
+
+1. Test responsive design on mobile, tablet, desktop
+2. Optimize SEO (meta tags, sitemap)
+3. Run performance tests and optimize
+4. Deploy to production
+5. Write report to `{@artifacts_path}/report.md` describing:
    - What was implemented
    - How the solution was tested
-   - The biggest issues or challenges encountered
+   - Any challenges encountered
