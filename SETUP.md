@@ -63,8 +63,8 @@ npm run dev
 \`\`\`
 
 Visit:
-- **Website**: http://localhost:3000
-- **Sanity Studio**: http://localhost:3000/studio
+- **Website**: http://localhost:3001
+- **Sanity Studio**: http://localhost:3001/studio
 
 ## Project Structure
 
@@ -91,7 +91,7 @@ Visit:
 ### Adding Content
 
 1. Start the dev server: `npm run dev`
-2. Visit http://localhost:3000/studio
+2. Visit http://localhost:3001/studio
 3. Log in with your Sanity credentials
 4. Use the interface to add:
    - **Posts**: News articles and updates
@@ -157,7 +157,7 @@ Follow the prompts to create your Sanity project. This will update `.env.local` 
 1. Go to https://www.sanity.io/manage
 2. Select your project → **API** → **CORS Origins**
 3. Add your Vercel URL: `https://your-project.vercel.app`
-4. Also add: `http://localhost:3000` (for local development)
+4. Also add: `http://localhost:3001` (for local development)
 
 ## Available Scripts
 
