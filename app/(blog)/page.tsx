@@ -1,16 +1,10 @@
 import Image from "next/image";
-import Link from "next/link";
 
-import Avatar from "./avatar";
-import CoverImage from "./cover-image";
-import DateComponent from "./date";
-import Onboarding from "./onboarding";
 import PortableText from "./portable-text";
 
-import type { HeroQueryResult } from "@/sanity.types";
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { heroQuery, settingsQuery } from "@/sanity/lib/queries";
+import { settingsQuery } from "@/sanity/lib/queries";
 
 function Intro(props: { title: string | null | undefined; description: any }) {
   const title = props.title || demo.title;
@@ -32,59 +26,15 @@ function Intro(props: { title: string | null | undefined; description: any }) {
   );
 }
 
-function HeroPost({
-  title,
-  slug,
-  excerpt,
-  coverImage,
-  date,
-  author,
-}: Pick<
-  Exclude<HeroQueryResult, null>,
-  "title" | "coverImage" | "date" | "excerpt" | "author" | "slug"
->) {
-  return (
-    <article>
-      <Link className="group mb-8 block md:mb-16" href={`/posts/${slug}`}>
-        <CoverImage image={coverImage} priority />
-      </Link>
-      <div className="mb-20 md:mb-28 md:grid md:grid-cols-2 md:gap-x-16 lg:gap-x-8">
-        <div>
-          <h3 className="text-pretty mb-4 text-4xl leading-tight lg:text-6xl">
-            <Link href={`/posts/${slug}`} className="hover:underline">
-              {title}
-            </Link>
-          </h3>
-          <div className="mb-4 text-lg md:mb-0">
-            <DateComponent dateString={date} />
-          </div>
-        </div>
-        <div>
-          {excerpt && (
-            <p className="text-pretty mb-4 text-lg leading-relaxed">
-              {excerpt}
-            </p>
-          )}
-          {author && <Avatar name={author.name} picture={author.picture} />}
-        </div>
-      </div>
-    </article>
-  );
-}
-
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
   let settings = null;
-  let heroPost = null;
 
   try {
-    [settings, heroPost] = await Promise.all([
-      sanityFetch({
-        query: settingsQuery,
-      }),
-      sanityFetch({ query: heroQuery }),
-    ]);
+    settings = await sanityFetch({
+      query: settingsQuery,
+    });
   } catch (error) {
     console.error("Failed to fetch from Sanity:", error);
   }
@@ -126,19 +76,6 @@ export default async function Page() {
           </div>
         </div>
       </section>
-
-      {heroPost ? (
-        <HeroPost
-          title={heroPost.title}
-          slug={heroPost.slug}
-          coverImage={heroPost.coverImage}
-          excerpt={heroPost.excerpt}
-          date={heroPost.date}
-          author={heroPost.author}
-        />
-      ) : (
-        <Onboarding />
-      )}
 
     </div>
   );
