@@ -8,7 +8,7 @@ export default function Header() {
         <nav className="flex items-center justify-between py-6">
           <Link href="/" className="flex items-center">
             <Image
-              src="/images/sig.jpg"
+              src="/images/sig.png"
               alt="Albert Vigoleis Thelen"
               width={1000}
               height={250}
