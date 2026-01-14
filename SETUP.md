@@ -112,33 +112,52 @@ To extend with gallery, links, and shop features, you'll need to:
 
 ## Deploying to Vercel
 
-### 1. Push to GitHub
+### Quick Deploy (Without Sanity Setup)
 
-\`\`\`bash
-git add .
-git commit -m "Initial commit"
-git push origin main
-\`\`\`
-
-### 2. Deploy on Vercel
+The site can be deployed immediately without configuring Sanity. It will build successfully with placeholder credentials and show the static pages.
 
 1. Go to https://vercel.com
 2. Click **Add New** → **Project**
-3. Import your GitHub repository
-4. Configure environment variables:
-   - `NEXT_PUBLIC_SANITY_PROJECT_ID`
-   - `NEXT_PUBLIC_SANITY_DATASET`
-   - `SANITY_API_READ_TOKEN`
-5. Click **Deploy**
+3. Import your GitHub repository: `fjblau/vigoleis`
+4. Click **Deploy** (no environment variables needed yet)
 
-Your site will be live at `https://your-project.vercel.app`
+Your site will be live at `https://your-project.vercel.app` with placeholder content.
 
-### 3. Connect Sanity to Production
+### Setting Up Sanity CMS (After Deployment)
 
-Update your Sanity CORS origins:
+Once your site is deployed, set up Sanity to enable content management:
+
+#### 1. Create Sanity Project Locally
+
+\`\`\`bash
+npm run setup
+\`\`\`
+
+Follow the prompts to create your Sanity project. This will update `.env.local` with real credentials.
+
+#### 2. Create a Read Token
+
+1. Go to https://www.sanity.io/manage
+2. Select your project → **API** → **Tokens**
+3. Click **Add API token**
+4. Name it "Read Token" with **Viewer** permissions
+5. Copy the token
+
+#### 3. Update Vercel Environment Variables
+
+1. Go to your Vercel project → **Settings** → **Environment Variables**
+2. Add the values from your `.env.local`:
+   - `NEXT_PUBLIC_SANITY_PROJECT_ID` = your project ID
+   - `NEXT_PUBLIC_SANITY_DATASET` = production
+   - `SANITY_API_READ_TOKEN` = your read token
+3. **Redeploy** to apply changes
+
+#### 4. Configure CORS
+
 1. Go to https://www.sanity.io/manage
 2. Select your project → **API** → **CORS Origins**
 3. Add your Vercel URL: `https://your-project.vercel.app`
+4. Also add: `http://localhost:3000` (for local development)
 
 ## Available Scripts
 
