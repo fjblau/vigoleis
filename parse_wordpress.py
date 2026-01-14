@@ -444,4 +444,5 @@ class WordPressToSanity:
 
 if __name__ == '__main__':
     converter = WordPressToSanity('vigoleis_wordpress.xml')
-    converter.convert(category_filter='news', url_filter='/news/dichter/')
+    # Filter by news category only - deduplication logic handles duplicates
+    converter.convert(category_filter='news')
