@@ -1,7 +1,7 @@
-# Technical Specification: Import Signature Background
+# Technical Specification: Import Signature to Header
 
 ## Difficulty Assessment
-**Easy** - Straightforward image import and CSS background application
+**Easy** - Straightforward image import and header component update
 
 ---
 
@@ -11,7 +11,7 @@
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **Image Location**: `/Users/frankblau/Documents/vigoleis-pics/sig.jpg`
-- **Target Page**: `app/(blog)/page.tsx` (home page)
+- **Target Component**: `app/(blog)/header.tsx`
 - **Image Storage**: `public/images/` directory
 
 ---
@@ -22,35 +22,27 @@
 - Copy `sig.jpg` from source location to `public/images/sig.jpg`
 - Follow existing pattern where images are stored in `public/images/` (e.g., `thelen-portrait.jpg`)
 
-### 2. Apply Background to Home Page
-Apply the signature image as a background on the home page component. Implementation options:
+### 2. Replace Header Text with Signature Image
+- Replace the text "Albert Vigoleis Thelen" (line 9 in `header.tsx`) with the signature image
+- Use Next.js `Image` component for optimization
+- Size the image appropriately for the header (height should match or complement the navigation items)
+- Maintain the Link wrapper for home page navigation
 
-**Option A: Full page background**
-- Add background to the root `<div>` container in the page component
-- Use Tailwind CSS background utilities or inline styles
-- Ensure proper opacity/positioning so content remains readable
-
-**Option B: Section-specific background**
-- Apply background to the `<Intro>` section or another specific section
-- More targeted and potentially better for content readability
-
-**Recommended**: Option A with subtle opacity to ensure text readability
-
-### 3. Background Styling Considerations
-- **Position**: Center or custom positioning based on visual preference
-- **Size**: Cover, contain, or auto depending on desired effect
-- **Repeat**: No-repeat to prevent tiling
-- **Opacity**: Reduce opacity (e.g., 0.05-0.15) to keep content readable
-- **Color overlay**: Optional light overlay to improve text contrast
+### 3. Image Sizing Considerations
+- **Height**: Approximately 40-60px to match header proportions
+- **Width**: Auto-scale based on image aspect ratio
+- **Alt text**: "Albert Vigoleis Thelen" for accessibility
+- **Priority**: Consider adding `priority` prop since it's in the header
 
 ---
 
 ## Source Code Changes
 
 ### Files to Modify
-1. **`app/(blog)/page.tsx`**
-   - Add background image styling to the root container or specific section
-   - Use Next.js Image optimization or CSS background-image
+1. **`app/(blog)/header.tsx`**
+   - Import Next.js `Image` component
+   - Replace text content in the Link component (lines 8-10) with Image component
+   - Adjust Tailwind classes as needed for proper image display
 
 ### Files to Create
 None - image file will be copied manually or via script
@@ -58,44 +50,38 @@ None - image file will be copied manually or via script
 ---
 
 ## Data Model / API Changes
-None required - this is a purely frontend styling change
+None required - this is a purely frontend component change
 
 ---
 
 ## Implementation Details
 
-### Styling Approach
-Using Tailwind CSS with inline styles for background image:
+### Updated Header Component
+Replace the Link content:
 
 ```tsx
-<div 
-  className="container mx-auto px-5"
-  style={{
-    backgroundImage: 'url(/images/sig.jpg)',
-    backgroundPosition: 'center',
-    backgroundSize: 'contain',
-    backgroundRepeat: 'no-repeat',
-    backgroundAttachment: 'fixed',
-    opacity: 0.1 // Applied to background only
-  }}
->
+import Link from "next/link";
+import Image from "next/image";
+
+export default function Header() {
+  return (
+    <header className="border-b border-accent-2 bg-white">
+      <div className="container mx-auto px-5">
+        <nav className="flex items-center justify-between py-6">
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/sig.jpg"
+              alt="Albert Vigoleis Thelen"
+              width={200}
+              height={50}
+              className="h-12 w-auto"
+              priority
+            />
+          </Link>
+          {/* navigation items remain unchanged */}
 ```
 
-Or using a wrapper div with opacity control:
-
-```tsx
-<div className="relative">
-  <div 
-    className="absolute inset-0 opacity-10 bg-no-repeat bg-center bg-contain"
-    style={{ backgroundImage: 'url(/images/sig.jpg)' }}
-  />
-  <div className="relative z-10">
-    {/* existing content */}
-  </div>
-</div>
-```
-
-**Recommended**: Second approach for better opacity control without affecting content
+**Note**: Width/height values may need adjustment based on actual image dimensions and visual preference
 
 ---
 
@@ -104,10 +90,11 @@ Or using a wrapper div with opacity control:
 ### Manual Testing
 1. Copy image file to `public/images/sig.jpg`
 2. Start dev server: `npm run dev`
-3. Navigate to home page (http://localhost:3001)
-4. Verify signature appears as background
-5. Verify text content remains readable
-6. Test responsiveness on different screen sizes
+3. Navigate to any page (http://localhost:3001) to see header
+4. Verify signature image appears in header left position
+5. Verify image is properly sized and aligned with navigation
+6. Click signature to ensure home page navigation works
+7. Test responsiveness on different screen sizes
 
 ### Build Verification
 ```bash
@@ -116,7 +103,6 @@ npm run build
 Ensure build succeeds without errors
 
 ### Type Checking
-No TypeScript changes required, but verify with:
 ```bash
 npm run lint
 ```
@@ -125,19 +111,20 @@ npm run lint
 
 ## Potential Issues & Considerations
 
-1. **Image size**: Signature image may need optimization if file size is large
-2. **Readability**: Background opacity must be subtle enough to maintain text readability
-3. **Positioning**: May need adjustment based on visual preference
-4. **Mobile experience**: Verify background looks good on mobile devices
-5. **Accessibility**: Ensure sufficient contrast ratio for text over background
+1. **Image dimensions**: May need to adjust width/height values based on actual image aspect ratio
+2. **Image size**: Signature image may need optimization if file size is large
+3. **Header height**: Image height should not make header too tall
+4. **Mobile experience**: Verify header looks good on mobile devices (may need responsive sizing)
+5. **Accessibility**: Alt text should be descriptive for screen readers
 
 ---
 
 ## Success Criteria
 
 - [ ] Signature image copied to `public/images/sig.jpg`
-- [ ] Background visible on home page
-- [ ] Text content remains clearly readable
+- [ ] Signature visible in header, replacing text
+- [ ] Header navigation to home page works
+- [ ] Image properly sized for header
 - [ ] Build completes successfully
 - [ ] No linting errors
 - [ ] Responsive design maintained
