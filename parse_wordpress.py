@@ -242,6 +242,40 @@ class WordPressToSanity:
         
         return xml_title
     
+    def extract_real_date(self, html: str, xml_date: str, title: str) -> str:
+        """Extract the real date from HTML content that matches the title"""
+        if not html:
+            return xml_date
+        
+        soup = BeautifulSoup(html, 'html5lib')
+        text = soup.get_text('\n')
+        lines = [l.strip() for l in text.split('\n') if l.strip()]
+        
+        # Look for the title and then find the date right before/after it
+        for i, line in enumerate(lines):
+            # Case 1: Bullet and title on same line (e.g., "· Premiere in Amsterdam")
+            if line.startswith('·') and title and title in line:
+                # Date should be on the next line
+                if i + 1 < len(lines):
+                    potential_date_line = lines[i + 1]
+                    date_match = re.match(r'(\d{2})\.(\d{2})\.(\d{4})', potential_date_line)
+                    if date_match:
+                        day, month, year = date_match.groups()
+                        return f"{year}-{month}-{day} 00:00:00"
+            
+            # Case 2: Bullet, date, and title on separate lines
+            if line.startswith('·') and i + 2 < len(lines):
+                potential_date_line = lines[i + 1]
+                potential_title_line = lines[i + 2]
+                
+                if title and title in potential_title_line:
+                    date_match = re.match(r'(\d{2})\.(\d{2})\.(\d{4})', potential_date_line)
+                    if date_match:
+                        day, month, year = date_match.groups()
+                        return f"{year}-{month}-{day} 00:00:00"
+        
+        return xml_date
+    
     def parse_item(self, item: ET.Element, url_filter: str = None) -> Optional[Dict[str, Any]]:
         """Parse a WordPress item and convert to Sanity post"""
         
@@ -281,7 +315,8 @@ class WordPressToSanity:
         title = self.extract_real_title(content_html, title, wp_slug)
         
         date_elem = item.find('wp:post_date', self.WP_NS)
-        date_str = date_elem.text if date_elem is not None else None
+        xml_date_str = date_elem.text if date_elem is not None else None
+        date_str = self.extract_real_date(content_html, xml_date_str, title) if xml_date_str else None
         
         author_elem = item.find('dc:creator', self.WP_NS)
         author_name = author_elem.text if author_elem is not None else 'Unknown'
