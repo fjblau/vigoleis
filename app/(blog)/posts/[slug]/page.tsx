@@ -104,9 +104,11 @@ export default async function PostPage({ params }: Props) {
             <Avatar name={post.author.name} picture={post.author.picture} />
           )}
         </div>
-        <div className="mb-8 sm:mx-0 md:mb-16">
-          <CoverImage image={post.coverImage} priority />
-        </div>
+        {post.coverImage && (
+          <div className="mb-8 sm:mx-0 md:mb-16">
+            <CoverImage image={post.coverImage} priority />
+          </div>
+        )}
         <div className="mx-auto max-w-2xl">
           <div className="mb-6 block md:hidden">
             {post.author && (
