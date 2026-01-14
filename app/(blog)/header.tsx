@@ -1,12 +1,20 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   return (
     <header className="border-b border-accent-2 bg-white">
       <div className="container mx-auto px-5">
         <nav className="flex items-center justify-between py-6">
-          <Link href="/" className="text-2xl font-bold tracking-tight">
-            Albert Vigoleis Thelen
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/sig.jpg"
+              alt="Albert Vigoleis Thelen"
+              width={200}
+              height={50}
+              className="h-12 w-auto"
+              priority
+            />
           </Link>
           <ul className="flex gap-6 text-sm font-medium">
             <li>
