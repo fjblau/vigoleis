@@ -1,3 +1,9 @@
+output/
+*.pyc
+__pycache__/
+.DS_Store
+venv/
+.env
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
