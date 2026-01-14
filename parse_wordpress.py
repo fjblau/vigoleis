@@ -242,7 +242,7 @@ class WordPressToSanity:
         
         return xml_title
     
-    def parse_item(self, item: ET.Element) -> Optional[Dict[str, Any]]:
+    def parse_item(self, item: ET.Element, url_filter: str = None) -> Optional[Dict[str, Any]]:
         """Parse a WordPress item and convert to Sanity post"""
         
         title = item.find('title').text if item.find('title') is not None else 'Untitled'
@@ -258,6 +258,12 @@ class WordPressToSanity:
         status = item.find('wp:status', self.WP_NS)
         if status is None or status.text != 'publish':
             return None
+        
+        if url_filter:
+            link_elem = item.find('link')
+            if link_elem is not None and link_elem.text:
+                if url_filter not in link_elem.text:
+                    return None
         
         category_elem = item.find('category[@domain="category"]')
         if category_elem is None:
@@ -324,8 +330,8 @@ class WordPressToSanity:
         
         return post_doc
     
-    def parse_wordpress_xml(self, category_filter: str = 'news') -> List[Dict[str, Any]]:
-        """Parse WordPress XML and extract items from specified category"""
+    def parse_wordpress_xml(self, category_filter: str = 'news', url_filter: str = None) -> List[Dict[str, Any]]:
+        """Parse WordPress XML and extract items from specified category and URL pattern"""
         
         tree = ET.parse(self.xml_file)
         root = tree.getroot()
@@ -345,7 +351,7 @@ class WordPressToSanity:
                 if category_filter and category_slug != category_filter:
                     continue
                 
-                post = self.parse_item(item)
+                post = self.parse_item(item, url_filter)
                 if post:
                     title = post['title']
                     date = post.get('date', '')
@@ -393,13 +399,15 @@ class WordPressToSanity:
         print(f"Exported {len(documents)} documents to {filepath}")
         return filepath
     
-    def convert(self, category_filter: str = 'news'):
+    def convert(self, category_filter: str = 'news', url_filter: str = None):
         """Main conversion process"""
         
         print(f"Parsing WordPress XML: {self.xml_file}")
         print(f"Filtering category: {category_filter}")
+        if url_filter:
+            print(f"Filtering URL pattern: {url_filter}")
         
-        posts = self.parse_wordpress_xml(category_filter)
+        posts = self.parse_wordpress_xml(category_filter, url_filter)
         
         print(f"\nFound {len(posts)} posts")
         print(f"Found {len(self.categories)} categories")
@@ -436,4 +444,4 @@ class WordPressToSanity:
 
 if __name__ == '__main__':
     converter = WordPressToSanity('vigoleis_wordpress.xml')
-    converter.convert(category_filter='news')
+    converter.convert(category_filter='news', url_filter='/news/dichter/')
