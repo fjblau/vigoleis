@@ -19,6 +19,14 @@ export default function Header() {
             </li>
             <li>
               <Link
+                href="/biography"
+                className="hover:underline transition-colors duration-200"
+              >
+                Biography
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/news"
                 className="hover:underline transition-colors duration-200"
               >
