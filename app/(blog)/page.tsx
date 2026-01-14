@@ -106,14 +106,33 @@ export default async function Page() {
         <Onboarding />
       )}
       {heroPost?._id && (
-        <aside>
-          <h2 className="mb-8 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
-            More Stories
-          </h2>
-          <Suspense>
-            <MoreStories skip={heroPost._id} limit={100} />
-          </Suspense>
-        </aside>
+        <>
+          <section className="mb-16 border-t border-accent-2 pt-16">
+            <div className="prose prose-lg max-w-none">
+              <h2 className="mb-6 text-4xl font-bold">Albert Vigoleis Thelen (1903-1989)</h2>
+              <p className="text-lg leading-relaxed">
+                Albert Vigoleis Thelen war ein deutscher Schriftsteller, Übersetzer und Dichter, 
+                dessen Hauptwerk <em>Die Insel des zweiten Gesichts</em> (1953) zu den bedeutendsten 
+                deutschen Romanen des 20. Jahrhunderts zählt. Mit seinem einzigartigen, sprachgewaltigen 
+                Stil und seinem feinen Humor schuf er ein literarisches Werk, das ihn zu einem der 
+                außergewöhnlichsten Autoren seiner Zeit macht.
+              </p>
+              <p className="text-lg leading-relaxed">
+                Diese Website widmet sich dem Leben und Werk von Albert Vigoleis Thelen und bietet 
+                Informationen zu seinen Publikationen, seiner Biographie und aktuellen Neuigkeiten 
+                aus der Thelen-Forschung.
+              </p>
+            </div>
+          </section>
+          <aside>
+            <h2 className="mb-8 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
+              News
+            </h2>
+            <Suspense>
+              <MoreStories skip={heroPost._id} limit={100} />
+            </Suspense>
+          </aside>
+        </>
       )}
     </div>
   );
