@@ -47,6 +47,8 @@ class WordPressToSanity:
         lines = text.split('\n')
         
         content_start = 0
+        last_title_match = None
+        
         for i, line in enumerate(lines):
             line_stripped = line.strip()
             
@@ -55,10 +57,12 @@ class WordPressToSanity:
                 while j < len(lines) and not lines[j].strip():
                     j += 1
                 if j < len(lines) and re.match(r'\d{2}\.\d{2}\.\d{4}', lines[j].strip()):
-                    content_start = j + 1
-                    while content_start < len(lines) and not lines[content_start].strip():
-                        content_start += 1
-                    break
+                    last_title_match = j + 1
+                    while last_title_match < len(lines) and not lines[last_title_match].strip():
+                        last_title_match += 1
+        
+        if last_title_match is not None:
+            content_start = last_title_match
         
         if content_start == 0:
             content_start = 0
@@ -300,7 +304,7 @@ class WordPressToSanity:
         if channel is None:
             raise ValueError("Invalid WordPress export: no channel element")
         
-        posts_by_title = {}
+        posts_by_key = {}
         duplicates_removed = 0
         
         for item in channel.findall('item'):
@@ -314,21 +318,39 @@ class WordPressToSanity:
                 post = self.parse_item(item)
                 if post:
                     title = post['title']
+                    date = post.get('date', '')
+                    post_key = f"{title}_{date}"
                     
-                    if title in posts_by_title:
-                        existing_content_len = len(str(posts_by_title[title].get('content', '')))
-                        new_content_len = len(str(post.get('content', '')))
+                    if post_key in posts_by_key:
+                        existing_post = posts_by_key[post_key]
                         
-                        if new_content_len > existing_content_len:
-                            posts_by_title[title] = post
+                        def has_real_content(p):
+                            """Check if post starts with actual content (not just the title/navigation)"""
+                            content = p.get('content', [])
+                            if not content:
+                                return False
+                            first_text = content[0].get('children', [{}])[0].get('text', '')
+                            return p['title'] not in first_text
+                        
+                        existing_has_content = has_real_content(existing_post)
+                        new_has_content = has_real_content(post)
+                        
+                        if new_has_content and not existing_has_content:
+                            posts_by_key[post_key] = post
+                        elif new_has_content == existing_has_content:
+                            existing_content_len = len(str(existing_post.get('content', '')))
+                            new_content_len = len(str(post.get('content', '')))
+                            if new_content_len > existing_content_len:
+                                posts_by_key[post_key] = post
+                        
                         duplicates_removed += 1
                     else:
-                        posts_by_title[title] = post
+                        posts_by_key[post_key] = post
         
         if duplicates_removed > 0:
             print(f"Removed {duplicates_removed} duplicate posts (keeping longest version of each)")
         
-        return list(posts_by_title.values())
+        return list(posts_by_key.values())
     
     def export_to_ndjson(self, documents: List[Dict[str, Any]], filename: str):
         """Export documents to NDJSON format"""
