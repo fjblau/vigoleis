@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Header() {
   return (
-    <header className="border-b border-accent-2 bg-white overflow-visible">
+    <header className="border-b border-accent-2 bg-white">
       <div className="container mx-auto px-5">
         <nav className="flex items-center justify-between py-6">
           <Link href="/" className="flex items-center">
@@ -12,7 +12,7 @@ export default function Header() {
               alt="Albert Vigoleis Thelen"
               width={1000}
               height={250}
-              className="h-60 w-auto"
+              className="h-12 w-auto"
               priority
             />
           </Link>

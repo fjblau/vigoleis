@@ -40,13 +40,8 @@ export default async function Page() {
   }
 
   return (
-    <div className="relative">
-      <div 
-        className="absolute inset-0 opacity-10 bg-no-repeat bg-center bg-contain"
-        style={{ backgroundImage: 'url(/images/sig.jpg)' }}
-      />
-      <div className="relative z-10 container mx-auto px-5">
-        <Intro title={settings?.title} description={settings?.description} />
+    <div className="container mx-auto px-5">
+      <Intro title={settings?.title} description={settings?.description} />
       
       <section className="mb-20 md:mb-28">
         <div className="md:grid md:grid-cols-2 md:gap-x-16 lg:gap-x-8">
@@ -79,7 +74,6 @@ export default async function Page() {
         </div>
       </section>
 
-      </div>
     </div>
   );
 }
