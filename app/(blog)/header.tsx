@@ -43,6 +43,14 @@ export default function Header() {
             </li>
             <li>
               <Link
+                href="/dictionary"
+                className="hover:underline transition-colors duration-200"
+              >
+                Dictionary
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/gallery"
                 className="hover:underline transition-colors duration-200"
               >
