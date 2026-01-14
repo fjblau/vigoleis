@@ -13,6 +13,9 @@ import {
   type PortableTextComponents,
   type PortableTextBlock,
 } from "next-sanity";
+import { Image } from "next-sanity/image";
+
+import { urlForImage } from "@/sanity/lib/utils";
 
 export default function CustomPortableText({
   className,
@@ -36,6 +39,30 @@ export default function CustomPortableText({
           <a href={value?.href} rel="noreferrer noopener">
             {children}
           </a>
+        );
+      },
+    },
+    types: {
+      image: ({ value }) => {
+        if (!value?.asset?._ref) {
+          return null;
+        }
+        return (
+          <figure className="my-8">
+            <Image
+              className="h-auto w-full rounded-lg"
+              width={1200}
+              height={800}
+              alt={value?.alt || ""}
+              src={urlForImage(value)?.width(1200).url() as string}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
+            {value?.caption && (
+              <figcaption className="mt-2 text-center text-sm text-gray-600">
+                {value.caption}
+              </figcaption>
+            )}
+          </figure>
         );
       },
     },
