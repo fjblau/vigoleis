@@ -14,7 +14,8 @@
     "setup": "npx sanity@latest init --env .env.local",
     "postsetup": "echo 'create the read token by following the rest of the guide: https://github.com/vercel/next.js/tree/canary/examples/cms-sanity#creating-a-read-token'",
     "typegen": "sanity schema extract && sanity typegen generate",
-    "delete-posts": "tsx scripts/delete-all-posts.ts"
+    "delete-posts": "tsx scripts/delete-all-posts.ts",
+    "copy-env": "bash scripts/copy-env.sh"
   },
   "dependencies": {
     "@sanity/assist": "^3.0.8",
