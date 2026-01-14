@@ -270,7 +270,8 @@ class WordPressToSanity:
         if channel is None:
             raise ValueError("Invalid WordPress export: no channel element")
         
-        posts = []
+        posts_by_title = {}
+        duplicates_removed = 0
         
         for item in channel.findall('item'):
             category_elem = item.find('category[@domain="category"]')
@@ -282,9 +283,22 @@ class WordPressToSanity:
                 
                 post = self.parse_item(item)
                 if post:
-                    posts.append(post)
+                    title = post['title']
+                    
+                    if title in posts_by_title:
+                        existing_content_len = len(str(posts_by_title[title].get('content', '')))
+                        new_content_len = len(str(post.get('content', '')))
+                        
+                        if new_content_len > existing_content_len:
+                            posts_by_title[title] = post
+                        duplicates_removed += 1
+                    else:
+                        posts_by_title[title] = post
         
-        return posts
+        if duplicates_removed > 0:
+            print(f"Removed {duplicates_removed} duplicate posts (keeping longest version of each)")
+        
+        return list(posts_by_title.values())
     
     def export_to_ndjson(self, documents: List[Dict[str, Any]], filename: str):
         """Export documents to NDJSON format"""
