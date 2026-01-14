@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -93,23 +94,24 @@ export default async function Page() {
   return (
     <div className="container mx-auto px-5">
       <Intro title={settings?.title} description={settings?.description} />
-      {heroPost ? (
-        <HeroPost
-          title={heroPost.title}
-          slug={heroPost.slug}
-          coverImage={heroPost.coverImage}
-          excerpt={heroPost.excerpt}
-          date={heroPost.date}
-          author={heroPost.author}
-        />
-      ) : (
-        <Onboarding />
-      )}
-      {heroPost?._id && (
-        <>
-          <section className="mb-16 border-t border-accent-2 pt-16">
-            <div className="prose prose-lg max-w-none">
-              <h2 className="mb-6 text-4xl font-bold">Albert Vigoleis Thelen (1903-1989)</h2>
+      
+      <section className="mb-20 md:mb-28">
+        <div className="md:grid md:grid-cols-2 md:gap-x-16 lg:gap-x-8">
+          <div className="mb-8 md:mb-0">
+            <Image
+              src="/images/thelen-portrait.jpg"
+              alt="Albert Vigoleis Thelen"
+              width={800}
+              height={1000}
+              className="rounded-lg shadow-lg"
+              priority
+            />
+          </div>
+          <div>
+            <h2 className="mb-6 text-4xl font-bold leading-tight lg:text-5xl">
+              Albert Vigoleis Thelen (1903-1989)
+            </h2>
+            <div className="prose prose-lg">
               <p className="text-lg leading-relaxed">
                 Albert Vigoleis Thelen war ein deutscher Schriftsteller, Übersetzer und Dichter, 
                 dessen Hauptwerk <em>Die Insel des zweiten Gesichts</em> (1953) zu den bedeutendsten 
@@ -123,16 +125,31 @@ export default async function Page() {
                 aus der Thelen-Forschung.
               </p>
             </div>
-          </section>
-          <aside>
-            <h2 className="mb-8 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
-              News
-            </h2>
-            <Suspense>
-              <MoreStories skip={heroPost._id} limit={100} />
-            </Suspense>
-          </aside>
-        </>
+          </div>
+        </div>
+      </section>
+
+      {heroPost ? (
+        <HeroPost
+          title={heroPost.title}
+          slug={heroPost.slug}
+          coverImage={heroPost.coverImage}
+          excerpt={heroPost.excerpt}
+          date={heroPost.date}
+          author={heroPost.author}
+        />
+      ) : (
+        <Onboarding />
+      )}
+      {heroPost?._id && (
+        <aside>
+          <h2 className="mb-8 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
+            News
+          </h2>
+          <Suspense>
+            <MoreStories skip={heroPost._id} limit={100} />
+          </Suspense>
+        </aside>
       )}
     </div>
   );
