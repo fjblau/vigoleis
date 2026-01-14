@@ -3,6 +3,7 @@ import { draftMode } from "next/headers";
 
 import { client } from "@/sanity/lib/client";
 import { token } from "@/sanity/lib/token";
+import { projectId } from "@/sanity/lib/api";
 
 /**
  * Used to fetch data in Server Components, it has built in support for handling Draft Mode and perspectives.
@@ -26,6 +27,11 @@ export async function sanityFetch<const QueryString extends string>({
   perspective?: Omit<ClientPerspective, "raw">;
   stega?: boolean;
 }) {
+  // Skip Sanity calls if using placeholder credentials
+  if (projectId === "placeholder") {
+    console.log("Sanity not configured, returning null");
+    return null;
+  }
   const perspective =
     _perspective || (await draftMode()).isEnabled
       ? "previewDrafts"

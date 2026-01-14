@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "predev": "npm run typegen || true",
+    "predev": "npm run typegen:safe",
     "dev": "next --turbo",
-    "prebuild": "npm run typegen || true",
+    "prebuild": "npm run typegen:safe",
     "build": "next build",
+    "typegen:safe": "(test \"$NEXT_PUBLIC_SANITY_PROJECT_ID\" != \"placeholder\" && npm run typegen) || echo 'Skipping typegen - Sanity not configured'",
     "start": "next start",
     "lint": "eslint .",
     "presetup": "echo 'about to setup env variables, follow the guide here: https://github.com/vercel/next.js/tree/canary/examples/cms-sanity#using-the-sanity-cli'",

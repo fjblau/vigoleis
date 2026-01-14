@@ -28,11 +28,12 @@ export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   try {
-    return await sanityFetch({
+    const result = await sanityFetch({
       query: postSlugs,
       perspective: "published",
       stega: false,
     });
+    return result || [];
   } catch (error) {
     console.error("Failed to generate static params:", error);
     return [];
