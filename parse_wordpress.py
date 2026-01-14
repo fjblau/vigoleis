@@ -217,6 +217,31 @@ class WordPressToSanity:
             'name': name
         }
     
+    def extract_real_title(self, html: str, xml_title: str, slug: str) -> str:
+        """Extract the real title from HTML content or slug"""
+        if not html:
+            return xml_title
+        
+        soup = BeautifulSoup(html, 'html5lib')
+        text = soup.get_text('\n')
+        lines = [l.strip() for l in text.split('\n') if l.strip()]
+        
+        for i, line in enumerate(lines):
+            if line.startswith('·') and i + 1 < len(lines):
+                potential_title = line[1:].strip()
+                next_line = lines[i + 1] if i + 1 < len(lines) else ''
+                
+                if re.match(r'\d{2}\.\d{2}\.\d{4}', next_line) and potential_title:
+                    return potential_title
+        
+        if slug and slug != 'index' and not slug.startswith('post-'):
+            title_from_slug = slug.replace('-', ' ').title()
+            title_from_slug = title_from_slug.replace('Ae', 'ä').replace('Oe', 'ö').replace('Ue', 'ü')
+            if title_from_slug:
+                return title_from_slug
+        
+        return xml_title
+    
     def parse_item(self, item: ET.Element) -> Optional[Dict[str, Any]]:
         """Parse a WordPress item and convert to Sanity post"""
         
@@ -244,13 +269,18 @@ class WordPressToSanity:
         content_elem = item.find('content:encoded', self.WP_NS)
         content_html = content_elem.text if content_elem is not None and content_elem.text else ''
         
+        wp_slug_elem = item.find('wp:post_name', self.WP_NS)
+        wp_slug = wp_slug_elem.text if wp_slug_elem is not None else ''
+        
+        title = self.extract_real_title(content_html, title, wp_slug)
+        
         date_elem = item.find('wp:post_date', self.WP_NS)
         date_str = date_elem.text if date_elem is not None else None
         
         author_elem = item.find('dc:creator', self.WP_NS)
         author_name = author_elem.text if author_elem is not None else 'Unknown'
         
-        slug = self.create_slug(title, post_id.text)
+        slug = wp_slug if wp_slug and wp_slug != 'index' else self.create_slug(title, post_id.text)
         
         if category_slug not in self.categories:
             self.categories[category_slug] = self.create_category_document(category_name, category_slug)
