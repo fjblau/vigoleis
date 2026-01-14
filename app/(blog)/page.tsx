@@ -1,11 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense } from "react";
 
 import Avatar from "./avatar";
 import CoverImage from "./cover-image";
 import DateComponent from "./date";
-import MoreStories from "./more-stories";
 import Onboarding from "./onboarding";
 import PortableText from "./portable-text";
 
@@ -141,16 +139,7 @@ export default async function Page() {
       ) : (
         <Onboarding />
       )}
-      {heroPost?._id && (
-        <aside>
-          <h2 className="mb-8 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
-            News
-          </h2>
-          <Suspense>
-            <MoreStories skip={heroPost._id} limit={100} />
-          </Suspense>
-        </aside>
-      )}
+
     </div>
   );
 }
