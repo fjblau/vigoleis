@@ -10,9 +10,9 @@ export default function Header() {
             <Image
               src="/images/sig.jpg"
               alt="Albert Vigoleis Thelen"
-              width={200}
-              height={50}
-              className="h-12 w-auto"
+              width={1000}
+              height={250}
+              className="h-60 w-auto"
               priority
             />
           </Link>
