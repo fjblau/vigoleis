@@ -2,6 +2,9 @@ import { createClient } from '@sanity/client';
 import { readFileSync } from 'fs';
 import { parseStringPromise } from 'xml2js';
 import path from 'path';
+import { config } from 'dotenv';
+
+config({ path: '.env.local' });
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
