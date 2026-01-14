@@ -44,3 +44,9 @@ next-env.d.ts
 # Env files created by scripts for working locally
 .env
 .env.local
+
+# Python / WordPress migration
+output/
+*.pyc
+__pycache__/
+venv/
