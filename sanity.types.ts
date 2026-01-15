@@ -115,6 +115,19 @@ export type LinksEphemera = {
     links?: Array<{
       title?: string;
       url?: string;
+      image?: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      };
       description?: string;
       _type: "link";
       _key: string;
@@ -576,28 +589,30 @@ export type DictionaryQueryResult = {
   }>;
 } | null;
 // Variable: linksEphemeraQuery
-// Query: *[_type == "linksEphemera"][0]
+// Query: *[_type == "linksEphemera"][0]{  title,  description,  categories[]{    categoryTitle,    categoryDescription,    links[]{      title,      url,      description,      image{        asset,        alt,        hotspot,        crop      }    }  }}
 export type LinksEphemeraQueryResult = {
-  _id: string;
-  _type: "linksEphemera";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  description?: string;
-  categories?: Array<{
-    categoryTitle?: string;
-    categoryDescription?: string;
-    links?: Array<{
-      title?: string;
-      url?: string;
-      description?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    _type: "linkCategory";
-    _key: string;
-  }>;
+  title: string | null;
+  description: string | null;
+  categories: Array<{
+    categoryTitle: string | null;
+    categoryDescription: string | null;
+    links: Array<{
+      title: string | null;
+      url: string | null;
+      description: string | null;
+      image: {
+        asset: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        } | null;
+        alt: string | null;
+        hotspot: SanityImageHotspot | null;
+        crop: SanityImageCrop | null;
+      } | null;
+    }> | null;
+  }> | null;
 } | null;
 // Variable: heroQuery
 // Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {    content,      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage {    asset,    alt,    hotspot,    crop  },  "date": coalesce(date, _updatedAt),  "author": author->{"name": coalesce(name, "Anonymous"), picture},  }
@@ -754,7 +769,7 @@ declare module "@sanity/client" {
     "*[_type == \"post\" && defined(slug.current)]{\"slug\": slug.current}": PostSlugsResult;
     "*[_type == \"settings\"][0]": SettingsQueryResult;
     "*[_type == \"dictionary\"][0]": DictionaryQueryResult;
-    "*[_type == \"linksEphemera\"][0]": LinksEphemeraQueryResult;
+    "*[_type == \"linksEphemera\"][0]{\n  title,\n  description,\n  categories[]{\n    categoryTitle,\n    categoryDescription,\n    links[]{\n      title,\n      url,\n      description,\n      image{\n        asset,\n        alt,\n        hotspot,\n        crop\n      }\n    }\n  }\n}": LinksEphemeraQueryResult;
     "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": HeroQueryResult;
     "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": MoreStoriesQueryResult;
     "\n  *[_type == \"post\" && slug.current == $slug] [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": PostQueryResult;

@@ -4,7 +4,25 @@ export const settingsQuery = defineQuery(`*[_type == "settings"][0]`);
 
 export const dictionaryQuery = defineQuery(`*[_type == "dictionary"][0]`);
 
-export const linksEphemeraQuery = defineQuery(`*[_type == "linksEphemera"][0]`);
+export const linksEphemeraQuery = defineQuery(`*[_type == "linksEphemera"][0]{
+  title,
+  description,
+  categories[]{
+    categoryTitle,
+    categoryDescription,
+    links[]{
+      title,
+      url,
+      description,
+      image{
+        asset,
+        alt,
+        hotspot,
+        crop
+      }
+    }
+  }
+}`);
 
 const postFields = /* groq */ `
   _id,

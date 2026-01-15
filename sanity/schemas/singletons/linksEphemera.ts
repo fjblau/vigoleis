@@ -58,16 +58,30 @@ export default defineType({
                       name: "title",
                       title: "Link Title",
                       type: "string",
-                      validation: (rule) => rule.required(),
                     }),
                     defineField({
                       name: "url",
                       title: "URL",
                       type: "url",
                       validation: (rule) =>
-                        rule.required().uri({
+                        rule.uri({
                           scheme: ["http", "https"],
                         }),
+                    }),
+                    defineField({
+                      name: "image",
+                      title: "Image",
+                      type: "image",
+                      options: {
+                        hotspot: true,
+                      },
+                      fields: [
+                        defineField({
+                          name: "alt",
+                          title: "Alt Text",
+                          type: "string",
+                        }),
+                      ],
                     }),
                     defineField({
                       name: "description",
@@ -80,11 +94,13 @@ export default defineType({
                     select: {
                       title: "title",
                       url: "url",
+                      media: "image",
                     },
-                    prepare({ title, url }) {
+                    prepare({ title, url, media }) {
                       return {
                         title: title || "Untitled Link",
                         subtitle: url,
+                        media,
                       };
                     },
                   },
