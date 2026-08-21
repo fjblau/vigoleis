@@ -163,7 +163,7 @@ export default async function ProductPage({ params }: Props) {
             )}
           </div>
 
-          {product.description?.length > 0 && (
+          {(product.description?.length ?? 0) > 0 && (
             <div className="max-w-none">
               <PortableText
                 value={product.description as PortableTextBlock[]}
@@ -171,7 +171,7 @@ export default async function ProductPage({ params }: Props) {
             </div>
           )}
 
-          {!product.description?.length && (
+          {(product.description?.length ?? 0) === 0 && (
             <p className="text-gray-600">
               Details about this item will be added soon. Please contact us for
               more information.
