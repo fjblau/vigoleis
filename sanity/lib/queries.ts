@@ -4,6 +4,16 @@ export const settingsQuery = defineQuery(`*[_type == "settings"][0]`);
 
 export const dictionaryQuery = defineQuery(`*[_type == "dictionary"][0]`);
 
+export const privacyPolicyQuery = defineQuery(
+  `*[_type == "privacyPolicy"][0]{ title, body }`,
+);
+
+export const termsQuery = defineQuery(`*[_type == "terms"][0]{ title, body }`);
+
+export const legalNoticeQuery = defineQuery(
+  `*[_type == "legalNotice"][0]{ title, body }`,
+);
+
 export const linksEphemeraQuery = defineQuery(`*[_type == "linksEphemera"][0]{
   title,
   description,

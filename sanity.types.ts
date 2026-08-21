@@ -686,6 +686,75 @@ export type DictionaryQueryResult = {
     _key: string;
   }>;
 } | null;
+// Variable: privacyPolicyQuery
+// Query: *[_type == "privacyPolicy"][0]{ title, body }
+export type PrivacyPolicyQueryResult = {
+  title: string | null;
+  body: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h2" | "h3" | "h4" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+} | null;
+// Variable: termsQuery
+// Query: *[_type == "terms"][0]{ title, body }
+export type TermsQueryResult = {
+  title: string | null;
+  body: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h2" | "h3" | "h4" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+} | null;
+// Variable: legalNoticeQuery
+// Query: *[_type == "legalNotice"][0]{ title, body }
+export type LegalNoticeQueryResult = {
+  title: string | null;
+  body: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h2" | "h3" | "h4" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+} | null;
 // Variable: linksEphemeraQuery
 // Query: *[_type == "linksEphemera"][0]{  title,  description,  categories[]{    categoryTitle,    categoryDescription,    links[]{      title,      url,      description,      image{        asset,        alt,        hotspot,        crop      }    }  }}
 export type LinksEphemeraQueryResult = {
@@ -867,6 +936,9 @@ declare module "@sanity/client" {
     "*[_type == \"post\" && defined(slug.current)]{\"slug\": slug.current}": PostSlugsResult;
     "*[_type == \"settings\"][0]": SettingsQueryResult;
     "*[_type == \"dictionary\"][0]": DictionaryQueryResult;
+    "*[_type == \"privacyPolicy\"][0]{ title, body }": PrivacyPolicyQueryResult;
+    "*[_type == \"terms\"][0]{ title, body }": TermsQueryResult;
+    "*[_type == \"legalNotice\"][0]{ title, body }": LegalNoticeQueryResult;
     "*[_type == \"linksEphemera\"][0]{\n  title,\n  description,\n  categories[]{\n    categoryTitle,\n    categoryDescription,\n    links[]{\n      title,\n      url,\n      description,\n      image{\n        asset,\n        alt,\n        hotspot,\n        crop\n      }\n    }\n  }\n}": LinksEphemeraQueryResult;
     "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": HeroQueryResult;
     "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": MoreStoriesQueryResult;
