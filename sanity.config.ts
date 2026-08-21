@@ -19,6 +19,10 @@ import post from "@/sanity/schemas/documents/post";
 import settings from "@/sanity/schemas/singletons/settings";
 import dictionary from "@/sanity/schemas/singletons/dictionary";
 import linksEphemera from "@/sanity/schemas/singletons/linksEphemera";
+import privacyPolicy from "@/sanity/schemas/singletons/privacyPolicy";
+import terms from "@/sanity/schemas/singletons/terms";
+import legalNotice from "@/sanity/schemas/singletons/legalNotice";
+import cookieConsent from "@/sanity/schemas/singletons/cookieConsent";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -35,6 +39,10 @@ export default defineConfig({
       settings,
       dictionary,
       linksEphemera,
+      privacyPolicy,
+      terms,
+      legalNotice,
+      cookieConsent,
       post,
       author,
       category,
@@ -74,8 +82,26 @@ export default defineConfig({
       },
       previewUrl: { previewMode: { enable: "/api/draft-mode/enable" } },
     }),
-    structureTool({ structure: pageStructure([settings, dictionary, linksEphemera]) }),
-    singletonPlugin([settings.name, dictionary.name, linksEphemera.name]),
+    structureTool({
+      structure: pageStructure([
+        settings,
+        dictionary,
+        linksEphemera,
+        privacyPolicy,
+        terms,
+        legalNotice,
+        cookieConsent,
+      ]),
+    }),
+    singletonPlugin([
+      settings.name,
+      dictionary.name,
+      linksEphemera.name,
+      privacyPolicy.name,
+      terms.name,
+      legalNotice.name,
+      cookieConsent.name,
+    ]),
     unsplashImageAsset(),
     assistWithPresets(),
     process.env.NODE_ENV === "development" &&
