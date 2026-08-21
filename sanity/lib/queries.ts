@@ -34,6 +34,24 @@ export const linksEphemeraQuery = defineQuery(`*[_type == "linksEphemera"][0]{
   }
 }`);
 
+export const galleryQuery = defineQuery(`*[_type == "gallery"][0]{
+  title,
+  description,
+  categories[]{
+    categoryTitle,
+    photos[]{
+      image{
+        asset,
+        alt,
+        hotspot,
+        crop
+      },
+      caption,
+      album
+    }
+  }
+}`);
+
 const postFields = /* groq */ `
   _id,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),
@@ -93,5 +111,67 @@ export const productBySlugQuery = defineQuery(`
     ${productCardFields},
     description[],
     "images": images[] { asset, alt, hotspot, crop }
+  }
+`);
+
+export const customerByEmailQuery = defineQuery(
+  `*[_type == "customer" && lower(email) == $email][0]{ _id, name, email }`,
+);
+
+export const productPricesByIdsQuery = defineQuery(`
+  *[_type == "product" && _id in $ids && coalesce(published, true)]{
+    _id,
+    title,
+    price,
+    inventory,
+    published
+  }
+`);
+
+const orderLineItemFields = /* groq */ `
+  "product": product->{ _id, title, slug },
+  title,
+  price,
+  quantity
+`;
+
+const orderFields = /* groq */ `
+  _id,
+  orderNumber,
+  items[]{ ${orderLineItemFields} },
+  total,
+  status,
+  "customer": customer->{ _id, name, email, address },
+  createdAt,
+  stripePaymentIntentId
+`;
+
+export const ordersQuery = defineQuery(`
+  *[_type == "order"] | order(createdAt desc) [0...$limit] {
+    ${orderFields}
+  }
+`);
+
+export const orderByIdQuery = defineQuery(`
+  *[_type == "order" && _id == $id][0] {
+    ${orderFields}
+  }
+`);
+
+export const orderByOrderNumberQuery = defineQuery(
+  `*[_type == "order" && orderNumber == $orderNumber][0]{
+    _id,
+    orderNumber,
+    "customer": customer->{ _id, name, email }
+  }`,
+);
+
+export const customerByIdQuery = defineQuery(
+  `*[_type == "customer" && _id == $id][0]{ _id, name, email, address }`,
+);
+
+export const ordersByCustomerIdQuery = defineQuery(`
+  *[_type == "order" && customer._ref == $customerId] | order(createdAt desc) {
+    ${orderFields}
   }
 `);

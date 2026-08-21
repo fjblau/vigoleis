@@ -1,10 +1,26 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { Image } from "next-sanity/image";
+
+import { sanityFetch } from "@/sanity/lib/fetch";
+import { productsQuery } from "@/sanity/lib/queries";
+import { urlForImage } from "@/sanity/lib/utils";
 
 export const metadata: Metadata = {
   title: "Shop",
 };
 
-export default function ShopPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ShopPage() {
+  let products: any[] = [];
+
+  try {
+    products = (await sanityFetch({ query: productsQuery })) || [];
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+  }
+
   return (
     <div className="container mx-auto px-5 py-16">
       <h1 className="mb-8 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
@@ -15,80 +31,68 @@ export default function ShopPage() {
         Thelen and his literary works.
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-          <div className="bg-gray-100 aspect-[3/4] flex items-center justify-center">
-            <p className="text-gray-500">Product Image</p>
-          </div>
-          <div className="p-4">
-            <h3 className="font-bold text-lg mb-2">Sample Product 1</h3>
-            <p className="text-gray-600 text-sm mb-3">
-              First edition or rare collectible item
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="text-xl font-bold">€XX.XX</span>
-              <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors">
-                View Details
-              </button>
-            </div>
-          </div>
+      {products.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {products.map((product) => {
+            const outOfStock = Number(product.inventory) <= 0;
+            return (
+              <Link
+                key={product._id}
+                href={`/shop/${product.slug}`}
+                className="group flex flex-col border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-shadow"
+              >
+                <div className="relative bg-gray-100 aspect-[3/4]">
+                  {product.image?.asset?._ref ? (
+                    <Image
+                      className="object-cover"
+                      fill
+                      alt={product.image.alt || product.title}
+                      src={
+                        urlForImage(product.image)?.width(800).url() as string
+                      }
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center">
+                      <p className="text-gray-500">No image</p>
+                    </div>
+                  )}
+                  {outOfStock && (
+                    <span className="absolute top-3 left-3 bg-black/80 text-white text-xs font-semibold px-2 py-1 rounded">
+                      Out of stock
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-1 flex-col p-4">
+                  <h3 className="font-bold text-lg mb-1">{product.title}</h3>
+                  {product.category?.title && (
+                    <p className="text-gray-500 text-sm mb-2">
+                      {product.category.title}
+                    </p>
+                  )}
+                  <div className="mt-auto flex items-center justify-between pt-3">
+                    <span className="text-xl font-bold">
+                      €{Number(product.price).toFixed(2)}
+                    </span>
+                    <span className="bg-black text-white px-4 py-2 rounded group-hover:bg-gray-800 transition-colors">
+                      View Details
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
-
-        <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-          <div className="bg-gray-100 aspect-[3/4] flex items-center justify-center">
-            <p className="text-gray-500">Product Image</p>
-          </div>
-          <div className="p-4">
-            <h3 className="font-bold text-lg mb-2">Sample Product 2</h3>
-            <p className="text-gray-600 text-sm mb-3">
-              Signed copy or special edition
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="text-xl font-bold">€XX.XX</span>
-              <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors">
-                View Details
-              </button>
-            </div>
-          </div>
+      ) : (
+        <div className="p-6 bg-amber-50 rounded-lg border border-amber-200">
+          <h2 className="text-xl font-bold mb-2">No products available yet</h2>
+          <p className="text-gray-700">
+            The shop is being stocked with rare books, collectibles, and
+            memorabilia. Please check back soon or contact us for inquiries
+            about available items.
+          </p>
         </div>
-
-        <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-          <div className="bg-gray-100 aspect-[3/4] flex items-center justify-center">
-            <p className="text-gray-500">Product Image</p>
-          </div>
-          <div className="p-4">
-            <h3 className="font-bold text-lg mb-2">Sample Product 3</h3>
-            <p className="text-gray-600 text-sm mb-3">
-              Commemorative item or merchandise
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="text-xl font-bold">€XX.XX</span>
-              <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors">
-                View Details
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-12 p-6 bg-amber-50 rounded-lg border border-amber-200">
-        <h2 className="text-xl font-bold mb-2">Shop Coming Soon</h2>
-        <p className="text-gray-700 mb-4">
-          The online shop is currently under construction. When ready, it will
-          feature:
-        </p>
-        <ul className="list-disc list-inside space-y-2 text-gray-700">
-          <li>Secure payment processing via Shopify or Stripe</li>
-          <li>Inventory management through Sanity CMS</li>
-          <li>Product catalog with detailed descriptions and images</li>
-          <li>Shopping cart and checkout functionality</li>
-          <li>Order tracking and customer management</li>
-        </ul>
-        <p className="mt-4 text-gray-700">
-          In the meantime, please check back soon or contact us for inquiries
-          about available items.
-        </p>
-      </div>
+      )}
     </div>
   );
 }

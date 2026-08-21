@@ -15,6 +15,7 @@ import AlertBanner from "./alert-banner";
 import ConsentBanner from "./consent-banner";
 import Header from "./header";
 import PortableText from "./portable-text";
+import { CartProvider } from "./cart-provider";
 
 import * as demo from "@/sanity/lib/demo";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -85,45 +86,47 @@ export default async function RootLayout({
       <body>
         <section className="min-h-screen">
           {isDraftMode && <AlertBanner />}
-          <Header />
-          <main>{children}</main>
-          <footer className="bg-accent-1 border-accent-2 border-t">
-            <div className="container mx-auto px-5">
-              {footer.length > 0 ? (
-                <PortableText
-                  className="prose-sm text-pretty bottom-0 w-full max-w-none bg-white py-12 text-center md:py-20"
-                  value={footer as PortableTextBlock[]}
-                />
-              ) : (
-                <div className="py-12 text-center">
-                  <p className="text-gray-600">
-                    © {new Date().getFullYear()} Albert Vigoleis Thelen Tribute
-                    Site. All rights reserved.
-                  </p>
-                </div>
-              )}
-              <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-accent-2 py-6 text-sm text-gray-600">
-                <Link
-                  href="/privacy"
-                  className="hover:underline transition-colors duration-200"
-                >
-                  Privacy Policy
-                </Link>
-                <Link
-                  href="/terms"
-                  className="hover:underline transition-colors duration-200"
-                >
-                  Terms &amp; Conditions
-                </Link>
-                <Link
-                  href="/legal"
-                  className="hover:underline transition-colors duration-200"
-                >
-                  Legal Notice
-                </Link>
-              </nav>
-            </div>
-          </footer>
+          <CartProvider>
+            <Header />
+            <main>{children}</main>
+            <footer className="bg-accent-1 border-accent-2 border-t">
+              <div className="container mx-auto px-5">
+                {footer.length > 0 ? (
+                  <PortableText
+                    className="prose-sm text-pretty bottom-0 w-full max-w-none bg-white py-12 text-center md:py-20"
+                    value={footer as PortableTextBlock[]}
+                  />
+                ) : (
+                  <div className="py-12 text-center">
+                    <p className="text-gray-600">
+                      © {new Date().getFullYear()} Albert Vigoleis Thelen
+                      Tribute Site. All rights reserved.
+                    </p>
+                  </div>
+                )}
+                <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-accent-2 py-6 text-sm text-gray-600">
+                  <Link
+                    href="/privacy"
+                    className="hover:underline transition-colors duration-200"
+                  >
+                    Privacy Policy
+                  </Link>
+                  <Link
+                    href="/terms"
+                    className="hover:underline transition-colors duration-200"
+                  >
+                    Terms &amp; Conditions
+                  </Link>
+                  <Link
+                    href="/legal"
+                    className="hover:underline transition-colors duration-200"
+                  >
+                    Legal Notice
+                  </Link>
+                </nav>
+              </div>
+            </footer>
+          </CartProvider>
         </section>
         <ConsentBanner />
         {isDraftMode && <VisualEditing />}

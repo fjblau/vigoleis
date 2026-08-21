@@ -3,6 +3,10 @@
 import { createClient } from "next-sanity";
 
 import { apiVersion, dataset, projectId } from "@/sanity/lib/api";
+import {
+  orderByOrderNumberQuery,
+  ordersByCustomerIdQuery,
+} from "@/sanity/lib/queries";
 
 export type DataRequestState = {
   ok: boolean;
@@ -18,6 +22,19 @@ export type DataRequestState = {
     email?: string;
     requestType?: string;
     message?: string;
+  };
+};
+
+export type DataRemovalState = {
+  ok: boolean;
+  message: string;
+  errors?: {
+    orderReference?: string;
+    email?: string;
+  };
+  values?: {
+    orderReference?: string;
+    email?: string;
   };
 };
 
@@ -115,6 +132,103 @@ export async function submitDataRequest(
       message:
         "Sorry, we could not submit your request right now. Please try again later or email us directly.",
       values: { name, email, requestType, message },
+    };
+  }
+}
+
+interface OwnershipOrder {
+  _id: string;
+  customer?: { _id: string; email?: string } | null;
+}
+
+interface OrderIdRow {
+  _id: string;
+}
+
+const REMOVAL_SUCCESS_MESSAGE =
+  "Your personal data and order history have been deleted from our store.";
+
+export async function deleteMyData(
+  _prev: DataRemovalState,
+  formData: FormData,
+): Promise<DataRemovalState> {
+  const orderReference = String(formData.get("orderReference") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+
+  const errors: DataRemovalState["errors"] = {};
+  if (!orderReference) {
+    errors.orderReference = "Please enter your order reference.";
+  }
+  if (!email) {
+    errors.email = "Please enter your email address.";
+  } else if (!EMAIL_RE.test(email)) {
+    errors.email = "Please enter a valid email address.";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return {
+      ok: false,
+      message: "Please correct the errors below.",
+      errors,
+      values: { orderReference, email },
+    };
+  }
+
+  const writeClient = getWriteClient();
+  if (!writeClient) {
+    return {
+      ok: false,
+      message:
+        "Data removal is not available because the server is not configured for deletion. Please email us directly and we will handle your request.",
+      values: { orderReference, email },
+    };
+  }
+
+  try {
+    const order = await writeClient.fetch<OwnershipOrder | null>(
+      orderByOrderNumberQuery,
+      { orderNumber: orderReference },
+    );
+
+    if (!order || !order.customer || !order.customer._id) {
+      return {
+        ok: false,
+        message:
+          "We could not find an order matching that reference and email.",
+        errors: { orderReference: "Order not found." },
+        values: { orderReference, email },
+      };
+    }
+
+    if (order.customer.email?.toLowerCase() !== email) {
+      return {
+        ok: false,
+        message:
+          "We could not find an order matching that reference and email.",
+        errors: { email: "Email does not match this order." },
+        values: { orderReference, email },
+      };
+    }
+
+    const customerId = order.customer._id;
+
+    const orders = await writeClient.fetch<OrderIdRow[]>(
+      ordersByCustomerIdQuery,
+      { customerId },
+    );
+    for (const row of orders) {
+      await writeClient.delete(row._id);
+    }
+    await writeClient.delete(customerId);
+
+    return { ok: true, message: REMOVAL_SUCCESS_MESSAGE };
+  } catch (error) {
+    console.error("[dataRemoval] Failed to delete customer data:", error);
+    return {
+      ok: false,
+      message:
+        "Something went wrong while deleting your data. Please try again later or email us directly.",
+      values: { orderReference, email },
     };
   }
 }

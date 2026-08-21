@@ -18,6 +18,8 @@ import category from "@/sanity/schemas/documents/category";
 import dataRequest from "@/sanity/schemas/documents/dataRequest";
 import post from "@/sanity/schemas/documents/post";
 import product from "@/sanity/schemas/documents/product";
+import customer from "@/sanity/schemas/documents/customer";
+import order from "@/sanity/schemas/documents/order";
 import settings from "@/sanity/schemas/singletons/settings";
 import dictionary from "@/sanity/schemas/singletons/dictionary";
 import linksEphemera from "@/sanity/schemas/singletons/linksEphemera";
@@ -25,6 +27,7 @@ import privacyPolicy from "@/sanity/schemas/singletons/privacyPolicy";
 import terms from "@/sanity/schemas/singletons/terms";
 import legalNotice from "@/sanity/schemas/singletons/legalNotice";
 import cookieConsent from "@/sanity/schemas/singletons/cookieConsent";
+import gallery from "@/sanity/schemas/singletons/gallery";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -45,11 +48,14 @@ export default defineConfig({
       terms,
       legalNotice,
       cookieConsent,
+      gallery,
       post,
       author,
       category,
       dataRequest,
       product,
+      customer,
+      order,
     ],
   },
   plugins: [
@@ -95,6 +101,7 @@ export default defineConfig({
         terms,
         legalNotice,
         cookieConsent,
+        gallery,
       ]),
     }),
     singletonPlugin([
@@ -105,6 +112,7 @@ export default defineConfig({
       terms.name,
       legalNotice.name,
       cookieConsent.name,
+      gallery.name,
     ]),
     unsplashImageAsset(),
     assistWithPresets(),

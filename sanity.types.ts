@@ -13,6 +13,53 @@
  */
 
 // Source: schema.json
+export type Order = {
+  _id: string;
+  _type: "order";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  orderNumber?: string;
+  items?: Array<{
+    product?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "product";
+    };
+    title?: string;
+    price?: number;
+    quantity?: number;
+    _key: string;
+  }>;
+  total?: number;
+  status?: "pending" | "paid" | "fulfilled" | "cancelled";
+  customer?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "customer";
+  };
+  createdAt?: string;
+  stripePaymentIntentId?: string;
+};
+
+export type Customer = {
+  _id: string;
+  _type: "customer";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  email?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+  };
+};
+
 export type Product = {
   _id: string;
   _type: "product";
@@ -164,6 +211,40 @@ export type Author = {
     alt?: string;
     _type: "image";
   };
+};
+
+export type Gallery = {
+  _id: string;
+  _type: "gallery";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  description?: string;
+  categories?: Array<{
+    categoryTitle?: string;
+    photos?: Array<{
+      image?: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      };
+      caption?: string;
+      album?: string;
+      _type: "photo";
+      _key: string;
+    }>;
+    _type: "galleryCategory";
+    _key: string;
+  }>;
 };
 
 export type CookieConsent = {
@@ -639,12 +720,19 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = Product | DataRequest | Post | Category | Author | CookieConsent | LegalNotice | Terms | PrivacyPolicy | LinksEphemera | Dictionary | Settings | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = Order | Customer | Product | DataRequest | Post | Category | Author | Gallery | CookieConsent | LegalNotice | Terms | PrivacyPolicy | LinksEphemera | Dictionary | Settings | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./app/(blog)/posts/[slug]/page.tsx
 // Variable: postSlugs
 // Query: *[_type == "post" && defined(slug.current)]{"slug": slug.current}
 export type PostSlugsResult = Array<{
+  slug: string | null;
+}>;
+
+// Source: ./app/(blog)/shop/[slug]/page.tsx
+// Variable: productSlugs
+// Query: *[_type == "product" && defined(slug.current) && coalesce(published, true)]{"slug": slug.current}
+export type ProductSlugsResult = Array<{
   slug: string | null;
 }>;
 
@@ -843,6 +931,30 @@ export type LinksEphemeraQueryResult = {
         hotspot: SanityImageHotspot | null;
         crop: SanityImageCrop | null;
       } | null;
+    }> | null;
+  }> | null;
+} | null;
+// Variable: galleryQuery
+// Query: *[_type == "gallery"][0]{  title,  description,  categories[]{    categoryTitle,    photos[]{      image{        asset,        alt,        hotspot,        crop      },      caption,      album    }  }}
+export type GalleryQueryResult = {
+  title: string | null;
+  description: string | null;
+  categories: Array<{
+    categoryTitle: string | null;
+    photos: Array<{
+      image: {
+        asset: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        } | null;
+        alt: string | null;
+        hotspot: SanityImageHotspot | null;
+        crop: SanityImageCrop | null;
+      } | null;
+      caption: string | null;
+      album: string | null;
     }> | null;
   }> | null;
 } | null;
@@ -1074,22 +1186,164 @@ export type ProductBySlugQueryResult = {
     crop: SanityImageCrop | null;
   }> | null;
 } | null;
+// Variable: customerByEmailQuery
+// Query: *[_type == "customer" && lower(email) == $email][0]{ _id, name, email }
+export type CustomerByEmailQueryResult = {
+  _id: string;
+  name: string | null;
+  email: string | null;
+} | null;
+// Variable: productPricesByIdsQuery
+// Query: *[_type == "product" && _id in $ids && coalesce(published, true)]{    _id,    title,    price,    inventory,    published  }
+export type ProductPricesByIdsQueryResult = Array<{
+  _id: string;
+  title: string | null;
+  price: number | null;
+  inventory: number | null;
+  published: boolean | null;
+}>;
+// Variable: ordersQuery
+// Query: *[_type == "order"] | order(createdAt desc) [0...$limit] {      _id,  orderNumber,  items[]{   "product": product->{ _id, title, slug },  title,  price,  quantity },  total,  status,  "customer": customer->{ _id, name, email, address },  createdAt,  stripePaymentIntentId  }
+export type OrdersQueryResult = Array<{
+  _id: string;
+  orderNumber: string | null;
+  items: Array<{
+    product: {
+      _id: string;
+      title: string | null;
+      slug: Slug | null;
+    } | null;
+    title: string | null;
+    price: number | null;
+    quantity: number | null;
+  }> | null;
+  total: number | null;
+  status: "cancelled" | "fulfilled" | "paid" | "pending" | null;
+  customer: {
+    _id: string;
+    name: string | null;
+    email: string | null;
+    address: {
+      street?: string;
+      city?: string;
+      postalCode?: string;
+      country?: string;
+    } | null;
+  } | null;
+  createdAt: string | null;
+  stripePaymentIntentId: string | null;
+}>;
+// Variable: orderByIdQuery
+// Query: *[_type == "order" && _id == $id][0] {      _id,  orderNumber,  items[]{   "product": product->{ _id, title, slug },  title,  price,  quantity },  total,  status,  "customer": customer->{ _id, name, email, address },  createdAt,  stripePaymentIntentId  }
+export type OrderByIdQueryResult = {
+  _id: string;
+  orderNumber: string | null;
+  items: Array<{
+    product: {
+      _id: string;
+      title: string | null;
+      slug: Slug | null;
+    } | null;
+    title: string | null;
+    price: number | null;
+    quantity: number | null;
+  }> | null;
+  total: number | null;
+  status: "cancelled" | "fulfilled" | "paid" | "pending" | null;
+  customer: {
+    _id: string;
+    name: string | null;
+    email: string | null;
+    address: {
+      street?: string;
+      city?: string;
+      postalCode?: string;
+      country?: string;
+    } | null;
+  } | null;
+  createdAt: string | null;
+  stripePaymentIntentId: string | null;
+} | null;
+// Variable: orderByOrderNumberQuery
+// Query: *[_type == "order" && orderNumber == $orderNumber][0]{    _id,    orderNumber,    "customer": customer->{ _id, name, email }  }
+export type OrderByOrderNumberQueryResult = {
+  _id: string;
+  orderNumber: string | null;
+  customer: {
+    _id: string;
+    name: string | null;
+    email: string | null;
+  } | null;
+} | null;
+// Variable: customerByIdQuery
+// Query: *[_type == "customer" && _id == $id][0]{ _id, name, email, address }
+export type CustomerByIdQueryResult = {
+  _id: string;
+  name: string | null;
+  email: string | null;
+  address: {
+    street?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+  } | null;
+} | null;
+// Variable: ordersByCustomerIdQuery
+// Query: *[_type == "order" && customer._ref == $customerId] | order(createdAt desc) {      _id,  orderNumber,  items[]{   "product": product->{ _id, title, slug },  title,  price,  quantity },  total,  status,  "customer": customer->{ _id, name, email, address },  createdAt,  stripePaymentIntentId  }
+export type OrdersByCustomerIdQueryResult = Array<{
+  _id: string;
+  orderNumber: string | null;
+  items: Array<{
+    product: {
+      _id: string;
+      title: string | null;
+      slug: Slug | null;
+    } | null;
+    title: string | null;
+    price: number | null;
+    quantity: number | null;
+  }> | null;
+  total: number | null;
+  status: "cancelled" | "fulfilled" | "paid" | "pending" | null;
+  customer: {
+    _id: string;
+    name: string | null;
+    email: string | null;
+    address: {
+      street?: string;
+      city?: string;
+      postalCode?: string;
+      country?: string;
+    } | null;
+  } | null;
+  createdAt: string | null;
+  stripePaymentIntentId: string | null;
+}>;
 
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "*[_type == \"post\" && defined(slug.current)]{\"slug\": slug.current}": PostSlugsResult;
+    "*[_type == \"product\" && defined(slug.current) && coalesce(published, true)]{\"slug\": slug.current}": ProductSlugsResult;
     "*[_type == \"settings\"][0]": SettingsQueryResult;
     "*[_type == \"dictionary\"][0]": DictionaryQueryResult;
     "*[_type == \"privacyPolicy\"][0]{ title, body }": PrivacyPolicyQueryResult;
     "*[_type == \"terms\"][0]{ title, body }": TermsQueryResult;
     "*[_type == \"legalNotice\"][0]{ title, body }": LegalNoticeQueryResult;
     "*[_type == \"linksEphemera\"][0]{\n  title,\n  description,\n  categories[]{\n    categoryTitle,\n    categoryDescription,\n    links[]{\n      title,\n      url,\n      description,\n      image{\n        asset,\n        alt,\n        hotspot,\n        crop\n      }\n    }\n  }\n}": LinksEphemeraQueryResult;
+    "*[_type == \"gallery\"][0]{\n  title,\n  description,\n  categories[]{\n    categoryTitle,\n    photos[]{\n      image{\n        asset,\n        alt,\n        hotspot,\n        crop\n      },\n      caption,\n      album\n    }\n  }\n}": GalleryQueryResult;
     "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": HeroQueryResult;
     "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": MoreStoriesQueryResult;
     "\n  *[_type == \"post\" && slug.current == $slug] [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": PostQueryResult;
     "\n  *[_type == \"product\" && defined(slug.current) && coalesce(published, true)] | order(title asc) {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled product\"),\n  \"slug\": slug.current,\n  price,\n  \"image\": images[0] { asset, alt, hotspot, crop },\n  \"category\": category->{ title, \"slug\": slug.current },\n  inventory,\n  published\n\n  }\n": ProductsQueryResult;
     "\n  *[_type == \"product\" && slug.current == $slug && coalesce(published, true)] [0] {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled product\"),\n  \"slug\": slug.current,\n  price,\n  \"image\": images[0] { asset, alt, hotspot, crop },\n  \"category\": category->{ title, \"slug\": slug.current },\n  inventory,\n  published\n,\n    description[],\n    \"images\": images[] { asset, alt, hotspot, crop }\n  }\n": ProductBySlugQueryResult;
+    "*[_type == \"customer\" && lower(email) == $email][0]{ _id, name, email }": CustomerByEmailQueryResult;
+    "\n  *[_type == \"product\" && _id in $ids && coalesce(published, true)]{\n    _id,\n    title,\n    price,\n    inventory,\n    published\n  }\n": ProductPricesByIdsQueryResult;
+    "\n  *[_type == \"order\"] | order(createdAt desc) [0...$limit] {\n    \n  _id,\n  orderNumber,\n  items[]{ \n  \"product\": product->{ _id, title, slug },\n  title,\n  price,\n  quantity\n },\n  total,\n  status,\n  \"customer\": customer->{ _id, name, email, address },\n  createdAt,\n  stripePaymentIntentId\n\n  }\n": OrdersQueryResult;
+    "\n  *[_type == \"order\" && _id == $id][0] {\n    \n  _id,\n  orderNumber,\n  items[]{ \n  \"product\": product->{ _id, title, slug },\n  title,\n  price,\n  quantity\n },\n  total,\n  status,\n  \"customer\": customer->{ _id, name, email, address },\n  createdAt,\n  stripePaymentIntentId\n\n  }\n": OrderByIdQueryResult;
+    "*[_type == \"order\" && orderNumber == $orderNumber][0]{\n    _id,\n    orderNumber,\n    \"customer\": customer->{ _id, name, email }\n  }": OrderByOrderNumberQueryResult;
+    "*[_type == \"customer\" && _id == $id][0]{ _id, name, email, address }": CustomerByIdQueryResult;
+    "\n  *[_type == \"order\" && customer._ref == $customerId] | order(createdAt desc) {\n    \n  _id,\n  orderNumber,\n  items[]{ \n  \"product\": product->{ _id, title, slug },\n  title,\n  price,\n  quantity\n },\n  total,\n  status,\n  \"customer\": customer->{ _id, name, email, address },\n  createdAt,\n  stripePaymentIntentId\n\n  }\n": OrdersByCustomerIdQueryResult;
   }
 }
