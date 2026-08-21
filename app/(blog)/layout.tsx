@@ -2,6 +2,7 @@ import "../globals.css";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   VisualEditing,
   toPlainText,
@@ -101,6 +102,26 @@ export default async function RootLayout({
                   </p>
                 </div>
               )}
+              <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-accent-2 py-6 text-sm text-gray-600">
+                <Link
+                  href="/privacy"
+                  className="hover:underline transition-colors duration-200"
+                >
+                  Privacy Policy
+                </Link>
+                <Link
+                  href="/terms"
+                  className="hover:underline transition-colors duration-200"
+                >
+                  Terms &amp; Conditions
+                </Link>
+                <Link
+                  href="/legal"
+                  className="hover:underline transition-colors duration-200"
+                >
+                  Legal Notice
+                </Link>
+              </nav>
             </div>
           </footer>
         </section>
