@@ -1264,6 +1264,61 @@ export type OrderByIdQueryResult = {
   createdAt: string | null;
   stripePaymentIntentId: string | null;
 } | null;
+// Variable: orderByOrderNumberQuery
+// Query: *[_type == "order" && orderNumber == $orderNumber][0]{    _id,    orderNumber,    "customer": customer->{ _id, name, email }  }
+export type OrderByOrderNumberQueryResult = {
+  _id: string;
+  orderNumber: string | null;
+  customer: {
+    _id: string;
+    name: string | null;
+    email: string | null;
+  } | null;
+} | null;
+// Variable: customerByIdQuery
+// Query: *[_type == "customer" && _id == $id][0]{ _id, name, email, address }
+export type CustomerByIdQueryResult = {
+  _id: string;
+  name: string | null;
+  email: string | null;
+  address: {
+    street?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+  } | null;
+} | null;
+// Variable: ordersByCustomerIdQuery
+// Query: *[_type == "order" && customer._ref == $customerId] | order(createdAt desc) {      _id,  orderNumber,  items[]{   "product": product->{ _id, title, slug },  title,  price,  quantity },  total,  status,  "customer": customer->{ _id, name, email, address },  createdAt,  stripePaymentIntentId  }
+export type OrdersByCustomerIdQueryResult = Array<{
+  _id: string;
+  orderNumber: string | null;
+  items: Array<{
+    product: {
+      _id: string;
+      title: string | null;
+      slug: Slug | null;
+    } | null;
+    title: string | null;
+    price: number | null;
+    quantity: number | null;
+  }> | null;
+  total: number | null;
+  status: "cancelled" | "fulfilled" | "paid" | "pending" | null;
+  customer: {
+    _id: string;
+    name: string | null;
+    email: string | null;
+    address: {
+      street?: string;
+      city?: string;
+      postalCode?: string;
+      country?: string;
+    } | null;
+  } | null;
+  createdAt: string | null;
+  stripePaymentIntentId: string | null;
+}>;
 
 // Query TypeMap
 import "@sanity/client";
@@ -1287,5 +1342,8 @@ declare module "@sanity/client" {
     "\n  *[_type == \"product\" && _id in $ids && coalesce(published, true)]{\n    _id,\n    title,\n    price,\n    inventory,\n    published\n  }\n": ProductPricesByIdsQueryResult;
     "\n  *[_type == \"order\"] | order(createdAt desc) [0...$limit] {\n    \n  _id,\n  orderNumber,\n  items[]{ \n  \"product\": product->{ _id, title, slug },\n  title,\n  price,\n  quantity\n },\n  total,\n  status,\n  \"customer\": customer->{ _id, name, email, address },\n  createdAt,\n  stripePaymentIntentId\n\n  }\n": OrdersQueryResult;
     "\n  *[_type == \"order\" && _id == $id][0] {\n    \n  _id,\n  orderNumber,\n  items[]{ \n  \"product\": product->{ _id, title, slug },\n  title,\n  price,\n  quantity\n },\n  total,\n  status,\n  \"customer\": customer->{ _id, name, email, address },\n  createdAt,\n  stripePaymentIntentId\n\n  }\n": OrderByIdQueryResult;
+    "*[_type == \"order\" && orderNumber == $orderNumber][0]{\n    _id,\n    orderNumber,\n    \"customer\": customer->{ _id, name, email }\n  }": OrderByOrderNumberQueryResult;
+    "*[_type == \"customer\" && _id == $id][0]{ _id, name, email, address }": CustomerByIdQueryResult;
+    "\n  *[_type == \"order\" && customer._ref == $customerId] | order(createdAt desc) {\n    \n  _id,\n  orderNumber,\n  items[]{ \n  \"product\": product->{ _id, title, slug },\n  title,\n  price,\n  quantity\n },\n  total,\n  status,\n  \"customer\": customer->{ _id, name, email, address },\n  createdAt,\n  stripePaymentIntentId\n\n  }\n": OrdersByCustomerIdQueryResult;
   }
 }

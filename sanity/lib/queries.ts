@@ -157,3 +157,21 @@ export const orderByIdQuery = defineQuery(`
     ${orderFields}
   }
 `);
+
+export const orderByOrderNumberQuery = defineQuery(
+  `*[_type == "order" && orderNumber == $orderNumber][0]{
+    _id,
+    orderNumber,
+    "customer": customer->{ _id, name, email }
+  }`,
+);
+
+export const customerByIdQuery = defineQuery(
+  `*[_type == "customer" && _id == $id][0]{ _id, name, email, address }`,
+);
+
+export const ordersByCustomerIdQuery = defineQuery(`
+  *[_type == "order" && customer._ref == $customerId] | order(createdAt desc) {
+    ${orderFields}
+  }
+`);

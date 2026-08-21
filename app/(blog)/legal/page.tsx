@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { type PortableTextBlock } from "next-sanity";
 
 import DataRequestForm from "./data-request-form";
+import SelfServiceDataForm from "./self-service-data-form";
 import PortableText from "../portable-text";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { legalNoticeQuery } from "@/sanity/lib/queries";
@@ -32,6 +33,7 @@ export default async function LegalNoticePage() {
         </div>
       )}
 
+      <SelfServiceDataForm />
       <DataRequestForm />
     </div>
   );
