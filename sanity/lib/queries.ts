@@ -69,3 +69,29 @@ export const postQuery = defineQuery(`
     ${postFields}
   }
 `);
+
+const productCardFields = /* groq */ `
+  _id,
+  "status": select(_originalId in path("drafts.**") => "draft", "published"),
+  "title": coalesce(title, "Untitled product"),
+  "slug": slug.current,
+  price,
+  "image": images[0] { asset, alt, hotspot, crop },
+  "category": category->{ title, "slug": slug.current },
+  inventory,
+  published
+`;
+
+export const productsQuery = defineQuery(`
+  *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(title asc) {
+    ${productCardFields}
+  }
+`);
+
+export const productBySlugQuery = defineQuery(`
+  *[_type == "product" && slug.current == $slug && coalesce(published, true)] [0] {
+    ${productCardFields},
+    description[],
+    "images": images[] { asset, alt, hotspot, crop }
+  }
+`);

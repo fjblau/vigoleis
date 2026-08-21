@@ -15,7 +15,9 @@ import { pageStructure, singletonPlugin } from "@/sanity/plugins/settings";
 import { assistWithPresets } from "@/sanity/plugins/assist";
 import author from "@/sanity/schemas/documents/author";
 import category from "@/sanity/schemas/documents/category";
+import dataRequest from "@/sanity/schemas/documents/dataRequest";
 import post from "@/sanity/schemas/documents/post";
+import product from "@/sanity/schemas/documents/product";
 import settings from "@/sanity/schemas/singletons/settings";
 import dictionary from "@/sanity/schemas/singletons/dictionary";
 import linksEphemera from "@/sanity/schemas/singletons/linksEphemera";
@@ -46,6 +48,8 @@ export default defineConfig({
       post,
       author,
       category,
+      dataRequest,
+      product,
     ],
   },
   plugins: [
