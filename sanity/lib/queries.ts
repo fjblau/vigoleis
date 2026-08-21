@@ -34,6 +34,24 @@ export const linksEphemeraQuery = defineQuery(`*[_type == "linksEphemera"][0]{
   }
 }`);
 
+export const galleryQuery = defineQuery(`*[_type == "gallery"][0]{
+  title,
+  description,
+  categories[]{
+    categoryTitle,
+    photos[]{
+      image{
+        asset,
+        alt,
+        hotspot,
+        crop
+      },
+      caption,
+      album
+    }
+  }
+}`);
+
 const postFields = /* groq */ `
   _id,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),

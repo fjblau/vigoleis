@@ -166,6 +166,40 @@ export type Author = {
   };
 };
 
+export type Gallery = {
+  _id: string;
+  _type: "gallery";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  description?: string;
+  categories?: Array<{
+    categoryTitle?: string;
+    photos?: Array<{
+      image?: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      };
+      caption?: string;
+      album?: string;
+      _type: "photo";
+      _key: string;
+    }>;
+    _type: "galleryCategory";
+    _key: string;
+  }>;
+};
+
 export type CookieConsent = {
   _id: string;
   _type: "cookieConsent";
@@ -639,12 +673,19 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = Product | DataRequest | Post | Category | Author | CookieConsent | LegalNotice | Terms | PrivacyPolicy | LinksEphemera | Dictionary | Settings | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = Product | DataRequest | Post | Category | Author | Gallery | CookieConsent | LegalNotice | Terms | PrivacyPolicy | LinksEphemera | Dictionary | Settings | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./app/(blog)/posts/[slug]/page.tsx
 // Variable: postSlugs
 // Query: *[_type == "post" && defined(slug.current)]{"slug": slug.current}
 export type PostSlugsResult = Array<{
+  slug: string | null;
+}>;
+
+// Source: ./app/(blog)/shop/[slug]/page.tsx
+// Variable: productSlugs
+// Query: *[_type == "product" && defined(slug.current) && coalesce(published, true)]{"slug": slug.current}
+export type ProductSlugsResult = Array<{
   slug: string | null;
 }>;
 
@@ -843,6 +884,30 @@ export type LinksEphemeraQueryResult = {
         hotspot: SanityImageHotspot | null;
         crop: SanityImageCrop | null;
       } | null;
+    }> | null;
+  }> | null;
+} | null;
+// Variable: galleryQuery
+// Query: *[_type == "gallery"][0]{  title,  description,  categories[]{    categoryTitle,    photos[]{      image{        asset,        alt,        hotspot,        crop      },      caption,      album    }  }}
+export type GalleryQueryResult = {
+  title: string | null;
+  description: string | null;
+  categories: Array<{
+    categoryTitle: string | null;
+    photos: Array<{
+      image: {
+        asset: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        } | null;
+        alt: string | null;
+        hotspot: SanityImageHotspot | null;
+        crop: SanityImageCrop | null;
+      } | null;
+      caption: string | null;
+      album: string | null;
     }> | null;
   }> | null;
 } | null;
@@ -1080,12 +1145,14 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "*[_type == \"post\" && defined(slug.current)]{\"slug\": slug.current}": PostSlugsResult;
+    "*[_type == \"product\" && defined(slug.current) && coalesce(published, true)]{\"slug\": slug.current}": ProductSlugsResult;
     "*[_type == \"settings\"][0]": SettingsQueryResult;
     "*[_type == \"dictionary\"][0]": DictionaryQueryResult;
     "*[_type == \"privacyPolicy\"][0]{ title, body }": PrivacyPolicyQueryResult;
     "*[_type == \"terms\"][0]{ title, body }": TermsQueryResult;
     "*[_type == \"legalNotice\"][0]{ title, body }": LegalNoticeQueryResult;
     "*[_type == \"linksEphemera\"][0]{\n  title,\n  description,\n  categories[]{\n    categoryTitle,\n    categoryDescription,\n    links[]{\n      title,\n      url,\n      description,\n      image{\n        asset,\n        alt,\n        hotspot,\n        crop\n      }\n    }\n  }\n}": LinksEphemeraQueryResult;
+    "*[_type == \"gallery\"][0]{\n  title,\n  description,\n  categories[]{\n    categoryTitle,\n    photos[]{\n      image{\n        asset,\n        alt,\n        hotspot,\n        crop\n      },\n      caption,\n      album\n    }\n  }\n}": GalleryQueryResult;
     "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": HeroQueryResult;
     "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": MoreStoriesQueryResult;
     "\n  *[_type == \"post\" && slug.current == $slug] [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": PostQueryResult;
