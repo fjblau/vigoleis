@@ -11,6 +11,7 @@ import { Inter } from "next/font/google";
 import { draftMode } from "next/headers";
 
 import AlertBanner from "./alert-banner";
+import ConsentBanner from "./consent-banner";
 import Header from "./header";
 import PortableText from "./portable-text";
 
@@ -103,6 +104,7 @@ export default async function RootLayout({
             </div>
           </footer>
         </section>
+        <ConsentBanner />
         {isDraftMode && <VisualEditing />}
         <SpeedInsights />
       </body>
