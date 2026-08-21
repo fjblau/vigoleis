@@ -18,6 +18,8 @@ import category from "@/sanity/schemas/documents/category";
 import dataRequest from "@/sanity/schemas/documents/dataRequest";
 import post from "@/sanity/schemas/documents/post";
 import product from "@/sanity/schemas/documents/product";
+import customer from "@/sanity/schemas/documents/customer";
+import order from "@/sanity/schemas/documents/order";
 import settings from "@/sanity/schemas/singletons/settings";
 import dictionary from "@/sanity/schemas/singletons/dictionary";
 import linksEphemera from "@/sanity/schemas/singletons/linksEphemera";
@@ -52,6 +54,8 @@ export default defineConfig({
       category,
       dataRequest,
       product,
+      customer,
+      order,
     ],
   },
   plugins: [

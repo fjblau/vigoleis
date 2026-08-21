@@ -113,3 +113,47 @@ export const productBySlugQuery = defineQuery(`
     "images": images[] { asset, alt, hotspot, crop }
   }
 `);
+
+export const customerByEmailQuery = defineQuery(
+  `*[_type == "customer" && lower(email) == $email][0]{ _id, name, email }`,
+);
+
+export const productPricesByIdsQuery = defineQuery(`
+  *[_type == "product" && _id in $ids && coalesce(published, true)]{
+    _id,
+    title,
+    price,
+    inventory,
+    published
+  }
+`);
+
+const orderLineItemFields = /* groq */ `
+  "product": product->{ _id, title, slug },
+  title,
+  price,
+  quantity
+`;
+
+const orderFields = /* groq */ `
+  _id,
+  orderNumber,
+  items[]{ ${orderLineItemFields} },
+  total,
+  status,
+  "customer": customer->{ _id, name, email, address },
+  createdAt,
+  stripePaymentIntentId
+`;
+
+export const ordersQuery = defineQuery(`
+  *[_type == "order"] | order(createdAt desc) [0...$limit] {
+    ${orderFields}
+  }
+`);
+
+export const orderByIdQuery = defineQuery(`
+  *[_type == "order" && _id == $id][0] {
+    ${orderFields}
+  }
+`);

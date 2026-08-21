@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { Image } from "next-sanity/image";
 
 import PortableText from "../../portable-text";
+import AddToCart from "../add-to-cart";
 
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { productBySlugQuery } from "@/sanity/lib/queries";
@@ -83,6 +84,10 @@ export default async function ProductPage({ params }: Props) {
   const outOfStock = Number(product.inventory) <= 0;
   const images = product.images || [];
   const [primaryImage, ...galleryImages] = images;
+  const cartImage =
+    primaryImage?.asset?._ref
+      ? (urlForImage(primaryImage)?.width(200).url() as string)
+      : undefined;
 
   return (
     <div className="container mx-auto px-5 py-16">
@@ -161,6 +166,19 @@ export default async function ProductPage({ params }: Props) {
                 In stock
               </span>
             )}
+          </div>
+
+          <div className="mb-8">
+            <AddToCart
+              product={{
+                _id: product._id,
+                slug: product.slug ?? "",
+                title: product.title,
+                price: Number(product.price),
+                image: cartImage,
+              }}
+              disabled={outOfStock}
+            />
           </div>
 
           {(product.description?.length ?? 0) > 0 && (
