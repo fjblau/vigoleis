@@ -28,6 +28,7 @@ import terms from "@/sanity/schemas/singletons/terms";
 import legalNotice from "@/sanity/schemas/singletons/legalNotice";
 import cookieConsent from "@/sanity/schemas/singletons/cookieConsent";
 import gallery from "@/sanity/schemas/singletons/gallery";
+import biography from "@/sanity/schemas/singletons/biography";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -49,6 +50,7 @@ export default defineConfig({
       legalNotice,
       cookieConsent,
       gallery,
+      biography,
       post,
       author,
       category,
@@ -65,6 +67,10 @@ export default defineConfig({
           {
             route: "/posts/:slug",
             filter: `_type == "post" && slug.current == $slug`,
+          },
+          {
+            route: "/biography",
+            filter: `_type == "biography"`,
           },
         ]),
         locations: {
@@ -88,6 +94,10 @@ export default defineConfig({
               ],
             }),
           }),
+          biography: defineLocations({
+            locations: [{ title: "Biography", href: "/biography" }],
+            message: "This document is the biography page",
+          }),
         },
       },
       previewUrl: { previewMode: { enable: "/api/draft-mode/enable" } },
@@ -102,6 +112,7 @@ export default defineConfig({
         legalNotice,
         cookieConsent,
         gallery,
+        biography,
       ]),
     }),
     singletonPlugin([
@@ -113,6 +124,7 @@ export default defineConfig({
       legalNotice.name,
       cookieConsent.name,
       gallery.name,
+      biography.name,
     ]),
     unsplashImageAsset(),
     assistWithPresets(),
