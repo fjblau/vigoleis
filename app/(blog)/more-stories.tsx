@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import Avatar from "./avatar";
 import CoverImage from "./cover-image";
 import DateComponent from "./date";
 
@@ -17,7 +16,7 @@ export default async function MoreStories(params: {
     <>
       <div className="mb-32 grid grid-cols-1 gap-y-20 md:grid-cols-2 md:gap-x-16 md:gap-y-32 lg:gap-x-32">
         {data?.map((post) => {
-          const { _id, title, slug, coverImage, excerpt, author } = post;
+          const { _id, title, slug, coverImage, excerpt } = post;
           return (
             <article key={_id}>
               {coverImage && (
@@ -38,7 +37,6 @@ export default async function MoreStories(params: {
                   {excerpt}
                 </p>
               )}
-              {author && <Avatar name={author.name} picture={author.picture} />}
             </article>
           );
         })}
