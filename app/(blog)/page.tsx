@@ -39,6 +39,10 @@ export default async function Page() {
     console.error("Failed to fetch from Sanity:", error);
   }
 
+  const introText: any = settings?.introText?.length
+    ? settings.introText
+    : demo.introText;
+
   return (
     <div className="container mx-auto px-5">
       <Intro title={settings?.title} description={settings?.description} />
@@ -56,20 +60,7 @@ export default async function Page() {
             />
           </div>
           <div>
-            <div className="prose prose-lg">
-              <p className="text-lg leading-relaxed">
-                Albert Vigoleis Thelen war ein deutscher Schriftsteller, Übersetzer und Dichter, 
-                dessen Hauptwerk <em>Die Insel des zweiten Gesichts</em> (1953) zu den bedeutendsten 
-                deutschen Romanen des 20. Jahrhunderts zählt. Mit seinem einzigartigen, sprachgewaltigen 
-                Stil und seinem feinen Humor schuf er ein literarisches Werk, das ihn zu einem der 
-                außergewöhnlichsten Autoren seiner Zeit macht.
-              </p>
-              <p className="text-lg leading-relaxed">
-                Diese Website widmet sich dem Leben und Werk von Albert Vigoleis Thelen und bietet 
-                Informationen zu seinen Publikationen, seiner Biographie und aktuellen Neuigkeiten 
-                aus der Thelen-Forschung.
-              </p>
-            </div>
+            <PortableText className="prose-lg" value={introText} />
           </div>
         </div>
       </section>
