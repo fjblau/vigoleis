@@ -213,6 +213,84 @@ export type Author = {
   };
 };
 
+export type Bibliography = {
+  _id: string;
+  _type: "bibliography";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  sections?: Array<{
+    heading?: string;
+    subsections?: Array<{
+      heading?: string;
+      entries?: Array<{
+        title?: string;
+        year?: string;
+        description?: string;
+        _type: "entry";
+        _key: string;
+      }>;
+      _type: "subsection";
+      _key: string;
+    }>;
+    _type: "section";
+    _key: string;
+  }>;
+};
+
+export type Biography = {
+  _id: string;
+  _type: "biography";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  introHeading?: string;
+  intro?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  timelineHeading?: string;
+  timeline?: Array<{
+    period?: string;
+    text?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal";
+      listItem?: never;
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    _type: "entry";
+    _key: string;
+  }>;
+};
+
 export type Gallery = {
   _id: string;
   _type: "gallery";
@@ -720,7 +798,7 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = Order | Customer | Product | DataRequest | Post | Category | Author | Gallery | CookieConsent | LegalNotice | Terms | PrivacyPolicy | LinksEphemera | Dictionary | Settings | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = Order | Customer | Product | DataRequest | Post | Category | Author | Bibliography | Biography | Gallery | CookieConsent | LegalNotice | Terms | PrivacyPolicy | LinksEphemera | Dictionary | Settings | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./app/(blog)/posts/[slug]/page.tsx
 // Variable: postSlugs
@@ -931,6 +1009,22 @@ export type LinksEphemeraQueryResult = {
         hotspot: SanityImageHotspot | null;
         crop: SanityImageCrop | null;
       } | null;
+    }> | null;
+  }> | null;
+} | null;
+// Variable: bibliographyQuery
+// Query: *[_type == "bibliography"][0]{  title,  sections[]{    heading,    subsections[]{      heading,      entries[]{        title,        year,        description      }    }  }}
+export type BibliographyQueryResult = {
+  title: string | null;
+  sections: Array<{
+    heading: string | null;
+    subsections: Array<{
+      heading: string | null;
+      entries: Array<{
+        title: string | null;
+        year: string | null;
+        description: string | null;
+      }> | null;
     }> | null;
   }> | null;
 } | null;
@@ -1332,6 +1426,7 @@ declare module "@sanity/client" {
     "*[_type == \"terms\"][0]{ title, body }": TermsQueryResult;
     "*[_type == \"legalNotice\"][0]{ title, body }": LegalNoticeQueryResult;
     "*[_type == \"linksEphemera\"][0]{\n  title,\n  description,\n  categories[]{\n    categoryTitle,\n    categoryDescription,\n    links[]{\n      title,\n      url,\n      description,\n      image{\n        asset,\n        alt,\n        hotspot,\n        crop\n      }\n    }\n  }\n}": LinksEphemeraQueryResult;
+    "*[_type == \"bibliography\"][0]{\n  title,\n  sections[]{\n    heading,\n    subsections[]{\n      heading,\n      entries[]{\n        title,\n        year,\n        description\n      }\n    }\n  }\n}": BibliographyQueryResult;
     "*[_type == \"gallery\"][0]{\n  title,\n  description,\n  categories[]{\n    categoryTitle,\n    photos[]{\n      image{\n        asset,\n        alt,\n        hotspot,\n        crop\n      },\n      caption,\n      album\n    }\n  }\n}": GalleryQueryResult;
     "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": HeroQueryResult;
     "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": MoreStoriesQueryResult;

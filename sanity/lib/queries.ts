@@ -34,6 +34,21 @@ export const linksEphemeraQuery = defineQuery(`*[_type == "linksEphemera"][0]{
   }
 }`);
 
+export const bibliographyQuery = defineQuery(`*[_type == "bibliography"][0]{
+  title,
+  sections[]{
+    heading,
+    subsections[]{
+      heading,
+      entries[]{
+        title,
+        year,
+        description
+      }
+    }
+  }
+}`);
+
 export const galleryQuery = defineQuery(`*[_type == "gallery"][0]{
   title,
   description,
