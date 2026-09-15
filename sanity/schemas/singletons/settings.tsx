@@ -51,6 +51,42 @@ export default defineType({
       ],
     }),
     defineField({
+      name: "introText",
+      description:
+        "This is the paragraph text displayed next to the portrait image on the front page.",
+      title: "Front Page Intro Text",
+      type: "array",
+      initialValue: demo.introText,
+      of: [
+        defineArrayMember({
+          type: "block",
+          options: {},
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: "Italic", value: "em" },
+              { title: "Bold", value: "strong" },
+            ],
+            annotations: [
+              defineField({
+                type: "object",
+                name: "link",
+                fields: [
+                  {
+                    type: "string",
+                    name: "href",
+                    title: "URL",
+                    validation: (rule) => rule.required(),
+                  },
+                ],
+              }),
+            ],
+          },
+        }),
+      ],
+    }),
+    defineField({
       name: "footer",
       description:
         "This is a block of text that will be displayed at the bottom of the page.",
