@@ -1,8 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import CartIndicator from "./cart-indicator";
-
 export default function Header() {
   return (
     <header className="border-b border-accent-2 bg-white">
@@ -24,7 +22,7 @@ export default function Header() {
                 href="/"
                 className="hover:underline transition-colors duration-200"
               >
-                Home
+                Startseite
               </Link>
             </li>
             <li>
@@ -32,7 +30,7 @@ export default function Header() {
                 href="/biography"
                 className="hover:underline transition-colors duration-200"
               >
-                Biography
+                Biografie
               </Link>
             </li>
             <li>
@@ -40,7 +38,7 @@ export default function Header() {
                 href="/news"
                 className="hover:underline transition-colors duration-200"
               >
-                News
+                Neuigkeiten
               </Link>
             </li>
             <li>
@@ -48,7 +46,7 @@ export default function Header() {
                 href="/bibliography"
                 className="hover:underline transition-colors duration-200"
               >
-                Bibliography
+                Bibliografie
               </Link>
             </li>
             <li>
@@ -56,7 +54,7 @@ export default function Header() {
                 href="/dictionary"
                 className="hover:underline transition-colors duration-200"
               >
-                Dictionary
+                Wörterbuch
               </Link>
             </li>
             <li>
@@ -64,7 +62,7 @@ export default function Header() {
                 href="/gallery"
                 className="hover:underline transition-colors duration-200"
               >
-                Gallery
+                Galerie
               </Link>
             </li>
             <li>
@@ -82,9 +80,6 @@ export default function Header() {
               >
                 Shop
               </Link>
-            </li>
-            <li className="ml-2">
-              <CartIndicator />
             </li>
           </ul>
         </nav>
