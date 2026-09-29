@@ -192,6 +192,7 @@ export const orderByOrderNumberQuery = defineQuery(
 export const orderByCancellationTokenHashQuery = defineQuery(
   `*[_type == "order" && cancellationTokenHash == $tokenHash][0]{
     _id,
+    _rev,
     orderNumber,
     status,
     cancelledAt,

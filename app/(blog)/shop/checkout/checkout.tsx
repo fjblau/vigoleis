@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { useCart } from "../../cart-provider";
 import { createOrder, type CreateOrderResult } from "./actions";
@@ -46,6 +46,7 @@ export default function Checkout() {
   const [formError, setFormError] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [sameAsShipping, setSameAsShipping] = useState(true);
+  const requestId = useRef<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -69,9 +70,17 @@ export default function Checkout() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFormError(null);
+    try {
+      requestId.current ??= sessionStorage.getItem("shop-request-id");
+      requestId.current ??= crypto.randomUUID();
+      sessionStorage.setItem("shop-request-id", requestId.current);
+    } catch {
+      requestId.current ??= crypto.randomUUID();
+    }
     startTransition(async () => {
       try {
         const res = await createOrder({
+          requestId: requestId.current!,
           customer: {
             name: form.name,
             email: form.email,
@@ -87,6 +96,10 @@ export default function Checkout() {
           })),
         });
         if (res.success) {
+          requestId.current = null;
+          try {
+            sessionStorage.removeItem("shop-request-id");
+          } catch {}
           clearCart();
           setResult(res);
         } else {
@@ -125,7 +138,7 @@ export default function Checkout() {
             <span className="font-semibold">Item subtotal:</span> €
             {result.total.toFixed(2)}
           </p>
-          {"confirmationEmailSent" in result && result.confirmationEmailSent === true ? (
+          {result.confirmationEmailSent ? (
             <p className="text-sm text-gray-600">
               A confirmation email with a cancellation link is on its way to{" "}
               <span className="font-medium">{result.email}</span>. We will
@@ -134,7 +147,12 @@ export default function Checkout() {
           ) : (
             <p className="text-sm text-gray-600">
               We will confirm shipping and arrange payment by invoice. We
-              could not confirm delivery of a cancellation link by email.
+              could not confirm delivery of a cancellation link by email. Please contact the shop if you need to cancel.
+            </p>
+          )}
+          {!result.merchantEmailSent && (
+            <p className="mt-3 text-sm text-red-700" role="alert">
+              We could not confirm that the shop received an email about your request. Please contact the shop directly and quote your request number.
             </p>
           )}
         </div>
