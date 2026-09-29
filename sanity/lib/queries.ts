@@ -130,7 +130,7 @@ export const productBySlugQuery = defineQuery(`
 `);
 
 export const customerByEmailQuery = defineQuery(
-  `*[_type == "customer" && lower(email) == $email][0]{ _id, name, email }`,
+  `*[_type == "customer" && lower(email) == $email][0]{ _id, name, email, phone }`,
 );
 
 export const productPricesByIdsQuery = defineQuery(`
@@ -156,7 +156,15 @@ const orderFields = /* groq */ `
   items[]{ ${orderLineItemFields} },
   total,
   status,
-  "customer": customer->{ _id, name, email, address },
+  "customer": customer->{ _id, name, email, phone, address },
+  customerEmail,
+  phone,
+  shippingAddress,
+  billingAddress,
+  cancelledAt,
+  merchantNotificationStatus,
+  customerNotificationStatus,
+  cancellationNotificationStatus,
   createdAt,
   stripePaymentIntentId
 `;
@@ -181,8 +189,18 @@ export const orderByOrderNumberQuery = defineQuery(
   }`,
 );
 
+export const orderByCancellationTokenHashQuery = defineQuery(
+  `*[_type == "order" && cancellationTokenHash == $tokenHash][0]{
+    _id,
+    orderNumber,
+    status,
+    cancelledAt,
+    "customerEmail": coalesce(customerEmail, customer->email)
+  }`,
+);
+
 export const customerByIdQuery = defineQuery(
-  `*[_type == "customer" && _id == $id][0]{ _id, name, email, address }`,
+  `*[_type == "customer" && _id == $id][0]{ _id, name, email, phone, address }`,
 );
 
 export const ordersByCustomerIdQuery = defineQuery(`

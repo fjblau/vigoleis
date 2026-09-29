@@ -2,6 +2,14 @@ import { BasketIcon } from "@sanity/icons";
 import { format, parseISO } from "date-fns";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+const addressFields = [
+  defineField({ name: "name", title: "Recipient name", type: "string" }),
+  defineField({ name: "street", title: "Street and number", type: "string" }),
+  defineField({ name: "city", title: "City", type: "string" }),
+  defineField({ name: "postalCode", title: "Postal code", type: "string" }),
+  defineField({ name: "country", title: "Country", type: "string" }),
+];
+
 export default defineType({
   name: "order",
   title: "Order",
@@ -101,6 +109,102 @@ export default defineType({
       to: [{ type: "customer" }],
       readOnly: true,
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "customerEmail",
+      title: "Customer email at checkout",
+      type: "string",
+      readOnly: true,
+    }),
+    defineField({
+      name: "phone",
+      title: "Phone at checkout",
+      type: "string",
+      readOnly: true,
+      validation: (rule) =>
+        rule.custom((value, context) =>
+          !context.document?.cancellationTokenHash || value?.trim()
+            ? true
+            : "Phone is required for purchase requests.",
+        ),
+    }),
+    defineField({
+      name: "shippingAddress",
+      title: "Shipping address at checkout",
+      type: "object",
+      readOnly: true,
+      fields: addressFields,
+      validation: (rule) =>
+        rule.custom((value, context) =>
+          !context.document?.cancellationTokenHash || value
+            ? true
+            : "Shipping address is required for purchase requests.",
+        ),
+    }),
+    defineField({
+      name: "billingAddress",
+      title: "Billing address at checkout",
+      type: "object",
+      readOnly: true,
+      fields: addressFields,
+      validation: (rule) =>
+        rule.custom((value, context) =>
+          !context.document?.cancellationTokenHash || value
+            ? true
+            : "Billing address is required for purchase requests.",
+        ),
+    }),
+    defineField({
+      name: "cancellationTokenHash",
+      title: "Cancellation token hash",
+      type: "string",
+      hidden: true,
+      readOnly: true,
+    }),
+    defineField({
+      name: "cancelledAt",
+      title: "Cancelled at",
+      type: "datetime",
+      readOnly: true,
+    }),
+    defineField({
+      name: "merchantNotificationStatus",
+      title: "Merchant notification",
+      type: "string",
+      readOnly: true,
+      options: {
+        list: [
+          { title: "Pending", value: "pending" },
+          { title: "Sent", value: "sent" },
+          { title: "Failed", value: "failed" },
+        ],
+      },
+    }),
+    defineField({
+      name: "customerNotificationStatus",
+      title: "Customer confirmation",
+      type: "string",
+      readOnly: true,
+      options: {
+        list: [
+          { title: "Pending", value: "pending" },
+          { title: "Sent", value: "sent" },
+          { title: "Failed", value: "failed" },
+        ],
+      },
+    }),
+    defineField({
+      name: "cancellationNotificationStatus",
+      title: "Cancellation notification",
+      type: "string",
+      readOnly: true,
+      options: {
+        list: [
+          { title: "Pending", value: "pending" },
+          { title: "Sent", value: "sent" },
+          { title: "Failed", value: "failed" },
+        ],
+      },
     }),
     defineField({
       name: "createdAt",
