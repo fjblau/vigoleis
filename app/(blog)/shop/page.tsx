@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { defineQuery } from "next-sanity";
 import { Image } from "next-sanity/image";
 
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { productsQuery } from "@/sanity/lib/queries";
 import { urlForImage } from "@/sanity/lib/utils";
 
 export const metadata: Metadata = {
@@ -12,11 +12,24 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
+const shopProductsQuery = defineQuery(`
+  *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(title asc) {
+    _id,
+    "title": coalesce(title, "Untitled product"),
+    "slug": slug.current,
+    price,
+    "image": images[0] { asset, alt, hotspot, crop },
+    "category": category->{ title },
+    description[] { _type, children[] { text } },
+    inventory
+  }
+`);
+
 export default async function ShopPage() {
   let products: any[] = [];
 
   try {
-    products = (await sanityFetch({ query: productsQuery })) || [];
+    products = (await sanityFetch({ query: shopProductsQuery })) || [];
   } catch (error) {
     console.error("Failed to fetch products:", error);
   }
@@ -34,7 +47,15 @@ export default async function ShopPage() {
       {products.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product) => {
-            const outOfStock = Number(product.inventory) <= 0;
+            const outOfStock =
+              product.inventory != null && Number(product.inventory) <= 0;
+            const description = (product.description || [])
+              .filter((block: any) => block._type === "block")
+              .map((block: any) =>
+                (block.children || []).map((child: any) => child.text).join(""),
+              )
+              .join(" ")
+              .trim();
             return (
               <Link
                 key={product._id}
@@ -68,6 +89,11 @@ export default async function ShopPage() {
                   {product.category?.title && (
                     <p className="text-gray-500 text-sm mb-2">
                       {product.category.title}
+                    </p>
+                  )}
+                  {description && (
+                    <p className="text-sm text-gray-600 line-clamp-3 mb-2">
+                      {description}
                     </p>
                   )}
                   <div className="mt-auto flex items-center justify-between pt-3">

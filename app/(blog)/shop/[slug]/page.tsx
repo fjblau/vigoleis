@@ -81,7 +81,8 @@ export default async function ProductPage({ params }: Props) {
     return notFound();
   }
 
-  const outOfStock = Number(product.inventory) <= 0;
+  const outOfStock =
+    product.inventory != null && Number(product.inventory) <= 0;
   const images = product.images || [];
   const [primaryImage, ...galleryImages] = images;
   const cartImage =
@@ -163,7 +164,7 @@ export default async function ProductPage({ params }: Props) {
               </span>
             ) : (
               <span className="inline-block bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded">
-                In stock
+                Available to request
               </span>
             )}
           </div>
@@ -179,6 +180,10 @@ export default async function ProductPage({ params }: Props) {
               }}
               disabled={outOfStock}
             />
+            <p className="mt-3 text-sm text-gray-600">
+              Submit a purchase request at checkout. We will confirm shipping and
+              arrange payment by invoice; no payment is taken online.
+            </p>
           </div>
 
           {(product.description?.length ?? 0) > 0 && (
