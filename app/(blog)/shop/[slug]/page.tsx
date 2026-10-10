@@ -16,6 +16,11 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+async function productParams(params: Props["params"]) {
+  const { slug } = await params;
+  return { slug: decodeURIComponent(slug) };
+}
+
 const productSlugs = defineQuery(
   `*[_type == "product" && defined(slug.current) && coalesce(published, true)]{"slug": slug.current}`,
 );
@@ -43,7 +48,7 @@ export async function generateMetadata(
   try {
     const product = await sanityFetch({
       query: productBySlugQuery,
-      params,
+      params: productParams(params),
       stega: false,
     });
     const previousImages = (await parent).openGraph?.images || [];
@@ -71,7 +76,7 @@ export default async function ProductPage({ params }: Props) {
   let product = null;
 
   try {
-    product = await sanityFetch({ query: productBySlugQuery, params });
+    product = await sanityFetch({ query: productBySlugQuery, params: productParams(params) });
   } catch (error) {
     console.error("Failed to fetch product:", error);
     return notFound();

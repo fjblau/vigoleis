@@ -59,7 +59,7 @@ export default async function ShopPage() {
             return (
               <Link
                 key={product._id}
-                href={`/shop/${product.slug}`}
+                href={`/shop/${encodeURIComponent(product.slug)}`}
                 className="group flex flex-col border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-shadow"
               >
                 <div className="relative bg-gray-100 aspect-[3/4]">
