@@ -82,8 +82,8 @@ export default defineType({
       name: "inventory",
       title: "Inventory / Stock",
       type: "number",
-      description: "Units available. Set to 0 to mark the product as out of stock.",
-      initialValue: 0,
+      description:
+        "Optional. Leave blank for manual availability checks; set to 0 to mark the product as out of stock.",
       validation: (rule) => rule.min(0).precision(0),
     }),
     defineField({
