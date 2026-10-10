@@ -216,7 +216,7 @@ export default function Checkout() {
               <li key={item.productId} className="flex items-center gap-4 p-4">
                 <div className="flex-1 min-w-0">
                   <Link
-                    href={`/shop/${item.slug}`}
+                    href={`/shop/${encodeURIComponent(item.slug)}`}
                     className="font-medium hover:underline"
                   >
                     {item.title}
