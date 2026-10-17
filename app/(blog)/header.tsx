@@ -30,7 +30,7 @@ export default function Header() {
                 href="/biography"
                 className="hover:underline transition-colors duration-200"
               >
-                Biografie
+                Biographie
               </Link>
             </li>
             <li>
@@ -46,7 +46,7 @@ export default function Header() {
                 href="/bibliography"
                 className="hover:underline transition-colors duration-200"
               >
-                Bibliografie
+                Bibliographie
               </Link>
             </li>
             <li>
@@ -63,14 +63,6 @@ export default function Header() {
                 className="hover:underline transition-colors duration-200"
               >
                 Galerie
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/links"
-                className="hover:underline transition-colors duration-200"
-              >
-                Links & Ephemera
               </Link>
             </li>
             <li>

@@ -9,7 +9,7 @@ import { galleryQuery } from "@/sanity/lib/queries";
 import { urlForImage } from "@/sanity/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Gallery",
+  title: "Galerie",
 };
 
 interface SanityPhoto {
@@ -27,8 +27,6 @@ interface SanityCategory {
 }
 
 interface GalleryData {
-  title?: string;
-  description?: string;
   categories?: SanityCategory[];
 }
 
@@ -64,16 +62,11 @@ export default async function GalleryPage() {
   return (
     <div className="container mx-auto px-5 py-16">
       <h1 className="mb-8 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
-        {data?.title || "Photo Gallery"}
+        Galerie
       </h1>
-      {data?.description ? (
-        <p className="mb-12 text-lg text-gray-600">{data.description}</p>
-      ) : (
-        <p className="mb-12 text-lg text-gray-600">
-          Explore rare photographs and images from the life and times of Albert
-          Vigoleis Thelen.
-        </p>
-      )}
+      <p className="mb-12 text-lg text-gray-600">
+        Seltene Fotos von Albert Vigoleis Thelen im Wandel der Zeit
+      </p>
 
       {hasPhotos ? (
         <GalleryClient categories={categories} />
