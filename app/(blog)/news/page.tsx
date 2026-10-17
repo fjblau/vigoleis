@@ -24,9 +24,6 @@ export default async function NewsPage() {
 
   return (
     <div className="container mx-auto px-5 py-16">
-      <h1 className="mb-12 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
-        Latest News
-      </h1>
       {heroPost?._id ? (
         <Suspense>
           <MoreStories skip="" limit={100} />
