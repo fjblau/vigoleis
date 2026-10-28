@@ -7,6 +7,7 @@ import { sanityFetch } from "@/sanity/lib/fetch";
 import { urlForImage } from "@/sanity/lib/utils";
 
 import AddToCart from "./add-to-cart";
+import CategorySelect from "./category-select";
 
 export const metadata: Metadata = {
   title: "Shop",
@@ -21,13 +22,17 @@ const shopProductsQuery = defineQuery(`
     "slug": slug.current,
     price,
     "image": images[0] { asset, alt, hotspot, crop },
-    "category": category->{ title },
+    "category": category->{ _id, title },
     description[] { _type, children[] { text } },
     inventory
   }
 `);
 
-export default async function ShopPage() {
+export default async function ShopPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string | string[] }>;
+}) {
   let products: any[] = [];
   let fetchFailed = false;
 
@@ -37,6 +42,24 @@ export default async function ShopPage() {
     console.error("Failed to fetch products:", error);
     fetchFailed = true;
   }
+
+  const categories = Array.from(
+    new Map<string, string>(
+      products
+        .filter((product) => product.category?._id && product.category?.title)
+        .map((product) => [product.category._id, product.category.title]),
+    ),
+    ([id, title]) => ({ id, title }),
+  ).sort((a, b) => a.title.localeCompare(b.title));
+  const requestedCategory = (await searchParams).category;
+  const selectedCategory = categories.some(
+    (category) => category.id === requestedCategory,
+  )
+    ? requestedCategory as string
+    : "";
+  const visibleProducts = selectedCategory
+    ? products.filter((product) => product.category?._id === selectedCategory)
+    : products;
 
   return (
     <div className="container mx-auto px-5 py-10 md:py-14">
@@ -48,9 +71,15 @@ export default async function ShopPage() {
         Thelen and his literary works.
       </p>
 
-      {products.length > 0 ? (
+      {products.length > 0 && (
+        <div className="mx-auto mb-5 max-w-4xl">
+          <CategorySelect categories={categories} selectedCategory={selectedCategory} />
+        </div>
+      )}
+
+      {visibleProducts.length > 0 ? (
         <ul className="mx-auto max-w-4xl space-y-2.5" aria-label="Shop products">
-          {products.map((product) => {
+          {visibleProducts.map((product) => {
             const outOfStock =
               product.inventory != null && Number(product.inventory) <= 0;
             const description = (product.description || [])
@@ -135,12 +164,18 @@ export default async function ShopPage() {
       ) : (
         <div className="mx-auto max-w-4xl border-l-2 border-stone-300 bg-[#faf9f3] p-6">
           <h2 className="mb-2 text-xl font-bold">
-            {fetchFailed ? "Shop temporarily unavailable" : "No products available yet"}
+            {fetchFailed
+              ? "Shop temporarily unavailable"
+              : selectedCategory
+                ? "No products in this category"
+                : "No products available yet"}
           </h2>
           <p className="text-gray-700">
             {fetchFailed
               ? "We couldn’t load the catalogue right now. Please try again later."
-              : "The shop is being stocked with rare books, collectibles, and memorabilia. Please check back soon or contact us for inquiries about available items."}
+              : selectedCategory
+                ? "Try another category or view all products."
+                : "The shop is being stocked with rare books, collectibles, and memorabilia. Please check back soon or contact us for inquiries about available items."}
           </p>
         </div>
       )}
