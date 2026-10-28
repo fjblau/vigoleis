@@ -856,7 +856,7 @@ export type ProductSlugsResult = Array<{
 
 // Source: ./app/(blog)/shop/page.tsx
 // Variable: shopProductsQuery
-// Query: *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(title asc) {    _id,    "title": coalesce(title, "Untitled product"),    "slug": slug.current,    price,    "image": images[0] { asset, alt, hotspot, crop },    "category": category->{ title },    description[] { _type, children[] { text } },    inventory  }
+// Query: *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(title asc) {    _id,    "title": coalesce(title, "Untitled product"),    "slug": slug.current,    price,    "image": images[0] { asset, alt, hotspot, crop },    "category": category->{ _id, title },    description[] { _type, children[] { text } },    inventory  }
 export type ShopProductsQueryResult = Array<{
   _id: string;
   title: string | "Untitled product";
@@ -874,6 +874,7 @@ export type ShopProductsQueryResult = Array<{
     crop: SanityImageCrop | null;
   } | null;
   category: {
+    _id: string;
     title: string | null;
   } | null;
   description: Array<{
@@ -1584,7 +1585,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     "*[_type == \"post\" && defined(slug.current)]{\"slug\": slug.current}": PostSlugsResult;
     "*[_type == \"product\" && defined(slug.current) && coalesce(published, true)]{\"slug\": slug.current}": ProductSlugsResult;
-    "\n  *[_type == \"product\" && defined(slug.current) && coalesce(published, true)] | order(title asc) {\n    _id,\n    \"title\": coalesce(title, \"Untitled product\"),\n    \"slug\": slug.current,\n    price,\n    \"image\": images[0] { asset, alt, hotspot, crop },\n    \"category\": category->{ title },\n    description[] { _type, children[] { text } },\n    inventory\n  }\n": ShopProductsQueryResult;
+    "\n  *[_type == \"product\" && defined(slug.current) && coalesce(published, true)] | order(title asc) {\n    _id,\n    \"title\": coalesce(title, \"Untitled product\"),\n    \"slug\": slug.current,\n    price,\n    \"image\": images[0] { asset, alt, hotspot, crop },\n    \"category\": category->{ _id, title },\n    description[] { _type, children[] { text } },\n    inventory\n  }\n": ShopProductsQueryResult;
     "*[_type == \"settings\"][0]": SettingsQueryResult;
     "*[_type == \"dictionary\"][0]": DictionaryQueryResult;
     "*[_type == \"privacyPolicy\"][0]{ title, body }": PrivacyPolicyQueryResult;
