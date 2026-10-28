@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Checkout from "./checkout";
 
 export const metadata: Metadata = {
-  title: "Checkout",
+  title: "Warenkorb und Kaufanfrage",
 };
 
 export const dynamic = "force-dynamic";

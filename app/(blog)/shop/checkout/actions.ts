@@ -72,9 +72,9 @@ function validateInput(input: CreateOrderInput): ValidationResult {
   const name = typeof customer?.name === "string" ? customer.name.trim() : "";
   const email = typeof customer?.email === "string" ? customer.email.trim().toLowerCase() : "";
   const phone = typeof customer?.phone === "string" ? customer.phone.trim() : "";
-  if (name.length < 2 || name.length > 200) return { ok: false, error: "Please enter your full name." };
-  if (!EMAIL_RE.test(email) || email.length > 254) return { ok: false, error: "Please enter a valid email address." };
-  if (!phone || phone.length > 60) return { ok: false, error: "Please enter your phone number." };
+  if (name.length < 2 || name.length > 200) return { ok: false, error: "Bitte geben Sie Ihren vollständigen Namen ein." };
+  if (!EMAIL_RE.test(email) || email.length > 254) return { ok: false, error: "Bitte geben Sie eine gültige E-Mail-Adresse ein." };
+  if (!phone || phone.length > 60) return { ok: false, error: "Bitte geben Sie Ihre Telefonnummer ein." };
 
   function address(value: CheckoutAddressInput | undefined) {
     if (!value || typeof value !== "object") return null;
@@ -90,16 +90,16 @@ function validateInput(input: CreateOrderInput): ValidationResult {
   const shippingAddress = address(customer.shippingAddress);
   const billingAddress = address(customer.billingAddress);
   if (!shippingAddress || !billingAddress) {
-    return { ok: false, error: "Please complete your shipping and billing addresses." };
+    return { ok: false, error: "Bitte vervollständigen Sie Ihre Liefer- und Rechnungsadresse." };
   }
 
   const rawItems = Array.isArray(input?.items) ? input.items : [];
-  if (rawItems.length === 0 || rawItems.length > 50) return { ok: false, error: "Your cart is empty or too large." };
+  if (rawItems.length === 0 || rawItems.length > 50) return { ok: false, error: "Ihr Warenkorb ist leer oder enthält zu viele Artikel." };
   const items: CheckoutItemInput[] = [];
   const seen = new Set<string>();
   for (const raw of rawItems) {
     if (typeof raw?.productId !== "string" || !raw.productId || !Number.isInteger(raw.quantity) || raw.quantity < 1 || raw.quantity > 100 || seen.has(raw.productId)) {
-      return { ok: false, error: "Invalid item in cart." };
+      return { ok: false, error: "Ein Artikel im Warenkorb ist ungültig." };
     }
     seen.add(raw.productId);
     items.push({ productId: raw.productId, quantity: raw.quantity });
@@ -124,10 +124,10 @@ function resultFromOrder(order: StoredOrder): CreateOrderResult {
 }
 
 export async function createOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
-  if (!hasWriteAccess) return { success: false, error: "Checkout is not available: order storage is not configured." };
+  if (!hasWriteAccess) return { success: false, error: "Die Kaufanfrage ist derzeit nicht verfügbar, da die Auftragsspeicherung nicht konfiguriert ist." };
   const config = mailConfiguration();
-  if (!config) return { success: false, error: "Checkout is not available: email delivery or shop URL is not configured." };
-  if (!REQUEST_ID_RE.test(input?.requestId ?? "")) return { success: false, error: "Invalid request. Please refresh checkout and try again." };
+  if (!config) return { success: false, error: "Die Kaufanfrage ist derzeit nicht verfügbar, da der E-Mail-Versand oder die Shop-URL nicht konfiguriert ist." };
+  if (!REQUEST_ID_RE.test(input?.requestId ?? "")) return { success: false, error: "Ungültige Anfrage. Bitte laden Sie die Seite neu und versuchen Sie es erneut." };
   const validated = validateInput(input);
   if (!validated.ok) return { success: false, error: validated.error };
   const { customer, items } = validated;
@@ -137,7 +137,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   try {
     const existing = await writeClient.getDocument<StoredOrder>(orderId);
     if (existing) {
-      if (existing.customerEmail !== customer.email) return { success: false, error: "This request has already been submitted." };
+      if (existing.customerEmail !== customer.email) return { success: false, error: "Diese Anfrage wurde bereits übermittelt." };
       return resultFromOrder(existing);
     }
 
@@ -147,10 +147,10 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     let total = 0;
     for (const item of items) {
       const product = byId.get(item.productId);
-      if (!product) return { success: false, error: "An item in your cart is no longer available." };
-      if (product.inventory != null && product.inventory <= 0) return { success: false, error: `"${product.title}" is out of stock.` };
+      if (!product) return { success: false, error: "Ein Artikel in Ihrem Warenkorb ist nicht mehr verfügbar." };
+      if (product.inventory != null && product.inventory <= 0) return { success: false, error: `"${product.title}" ist derzeit nicht auf Lager.` };
       const price = Number(product.price);
-      if (!Number.isFinite(price) || price < 0) return { success: false, error: `Could not determine the price for "${product.title}".` };
+      if (!Number.isFinite(price) || price < 0) return { success: false, error: `Der Preis für "${product.title}" konnte nicht ermittelt werden.` };
       lineItems.push({ _key: randomUUID(), product: { _type: "reference", _ref: product._id }, title: product.title, price: round2(price), quantity: item.quantity });
       total += price * item.quantity;
     }
@@ -181,19 +181,19 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     });
     storedOrder = candidate as StoredOrder;
     if (candidate.orderNumber !== orderNumber) {
-      if (candidate.customerEmail !== customer.email) return { success: false, error: "This request has already been submitted." };
+      if (candidate.customerEmail !== customer.email) return { success: false, error: "Diese Anfrage wurde bereits übermittelt." };
       return resultFromOrder(candidate as StoredOrder);
     }
 
     const addressText = (address: { name: string } & CheckoutAddressInput) =>
       `${address.name}\n${address.street}\n${address.postalCode} ${address.city}\n${address.country}`;
-    const lines = lineItems.map((item) => `${item.quantity} × ${item.title} — €${item.price.toFixed(2)} each`).join("\n");
+    const lines = lineItems.map((item) => `${item.quantity} × ${item.title} — €${item.price.toFixed(2)} pro Stück`).join("\n");
     const cancellationUrl = `${config.origin}/shop/cancel/${token}`;
     const deliveries = await Promise.allSettled([
-      sendShopEmail(config, merchantEmail, `Purchase request ${orderNumber}`,
-        `Purchase request ${orderNumber}\n\n${lines}\n\nItem subtotal: €${total.toFixed(2)} (shipping to be confirmed)\n\nCustomer: ${customer.name}\nEmail: ${customer.email}\nPhone: ${customer.phone}\n\nShipping:\n${addressText({ name: customer.name, ...customer.shippingAddress })}\n\nBilling:\n${addressText({ name: customer.name, ...customer.billingAddress })}\n\nNo payment has been taken.`, `purchase-${orderId}-merchant`),
-      sendShopEmail(config, customer.email, `Your purchase request ${orderNumber}`,
-        `Thank you for your purchase request ${orderNumber}.\n\n${lines}\n\nItem subtotal: €${total.toFixed(2)}. Shipping and availability will be confirmed manually; we will contact you about invoicing. No payment has been taken.\n\nTo cancel your request before it is marked paid, visit:\n${cancellationUrl}`, `purchase-${orderId}-customer`),
+      sendShopEmail(config, merchantEmail, `Kaufanfrage ${orderNumber}`,
+        `Kaufanfrage ${orderNumber}\n\n${lines}\n\nZwischensumme der Artikel: €${total.toFixed(2)} (Versandkosten werden noch bestätigt)\n\nKunde: ${customer.name}\nE-Mail: ${customer.email}\nTelefon: ${customer.phone}\n\nLieferadresse:\n${addressText({ name: customer.name, ...customer.shippingAddress })}\n\nRechnungsadresse:\n${addressText({ name: customer.name, ...customer.billingAddress })}\n\nEs wurde keine Zahlung vorgenommen.`, `purchase-${orderId}-merchant`),
+      sendShopEmail(config, customer.email, `Ihre Kaufanfrage ${orderNumber}`,
+        `Vielen Dank für Ihre Kaufanfrage ${orderNumber}.\n\n${lines}\n\nZwischensumme der Artikel: €${total.toFixed(2)}. Versandkosten und Verfügbarkeit werden manuell bestätigt. Wir melden uns bei Ihnen bezüglich der Rechnung. Es wurde noch keine Zahlung vorgenommen.\n\nSie können Ihre Anfrage stornieren, bevor sie als bezahlt markiert wird. Rufen Sie dazu folgende Seite auf:\n${cancellationUrl}`, `purchase-${orderId}-customer`),
     ]);
     const merchantSent = deliveries[0].status === "fulfilled";
     const customerSent = deliveries[1].status === "fulfilled";
@@ -225,8 +225,8 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       if (persisted?.customerEmail === customer.email) return resultFromOrder(persisted);
     } catch (lookupError) {
       console.error("Failed to check purchase request persistence:", lookupError);
-      return { success: false, error: "Request status is uncertain. Please contact the shop before trying again." };
+      return { success: false, error: "Der Status Ihrer Anfrage ist unklar. Bitte kontaktieren Sie den Shop, bevor Sie es erneut versuchen." };
     }
-    return { success: false, error: "Could not submit your request. Please try again." };
+    return { success: false, error: "Ihre Anfrage konnte nicht übermittelt werden. Bitte versuchen Sie es erneut." };
   }
 }

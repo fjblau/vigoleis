@@ -30,7 +30,7 @@ export default function CategorySelect({
   return (
     <div className="flex flex-wrap items-center gap-3">
       <label htmlFor="shop-category" className="text-sm font-medium text-gray-700">
-        Category
+        Kategorie
       </label>
       <select
         id="shop-category"
@@ -39,7 +39,7 @@ export default function CategorySelect({
         onChange={(event) => handleChange(event.target.value)}
         className="min-w-[180px] rounded border border-stone-300 bg-[#faf9f3] px-3 py-2 text-sm text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
       >
-        <option value="">All categories</option>
+        <option value="">Alle Kategorien</option>
         {categories.map((category) => (
           <option key={category.id} value={category.id}>
             {category.title}

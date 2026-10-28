@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 const shopProductsQuery = defineQuery(`
   *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(title asc) {
     _id,
-    "title": coalesce(title, "Untitled product"),
+    "title": coalesce(title, "Produkt ohne Titel"),
     "slug": slug.current,
     price,
     "image": images[0] { asset, alt, hotspot, crop },
@@ -64,11 +64,11 @@ export default async function ShopPage({
   return (
     <div className="container mx-auto px-5 py-10 md:py-14">
       <h1 className="mb-6 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
-        Memorabilia Shop
+        Shop für Sammlerstücke
       </h1>
       <p className="mb-9 text-lg text-gray-600">
-        Rare books, collectibles, and memorabilia related to Albert Vigoleis
-        Thelen and his literary works.
+        Seltene Bücher, Sammlerstücke und Erinnerungsstücke zu Albert Vigoleis
+        Thelen und seinen literarischen Werken.
       </p>
 
       {products.length > 0 && (
@@ -78,7 +78,7 @@ export default async function ShopPage({
       )}
 
       {visibleProducts.length > 0 ? (
-        <ul className="mx-auto max-w-4xl space-y-2.5" aria-label="Shop products">
+        <ul className="mx-auto max-w-4xl space-y-2.5" aria-label="Produkte im Shop">
           {visibleProducts.map((product) => {
             const outOfStock =
               product.inventory != null && Number(product.inventory) <= 0;
@@ -98,7 +98,7 @@ export default async function ShopPage({
               <li key={product._id} className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 even:[&>div]:bg-[#f7f5eb] sm:grid-cols-[88px_minmax(0,1fr)] sm:gap-4">
                 <Link
                   href={productHref}
-                  aria-label={`View ${product.title}`}
+                  aria-label={`${product.title} ansehen`}
                   className="relative block w-[72px] self-start aspect-[3/4] bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black sm:w-[88px]"
                 >
                   {imageUrl ? (
@@ -111,7 +111,7 @@ export default async function ShopPage({
                     />
                   ) : (
                     <span className="flex h-full items-center justify-center px-1 text-center text-xs text-gray-600">
-                      No image
+                      Kein Bild
                     </span>
                   )}
                 </Link>
@@ -142,7 +142,7 @@ export default async function ShopPage({
                     </span>
                     <span aria-hidden="true" className="text-stone-400">·</span>
                     {outOfStock ? (
-                      <span className="font-medium text-gray-600">Out of stock</span>
+                      <span className="font-medium text-gray-600">Nicht vorrätig</span>
                     ) : (
                       <AddToCart
                         compact
@@ -165,17 +165,17 @@ export default async function ShopPage({
         <div className="mx-auto max-w-4xl border-l-2 border-stone-300 bg-[#faf9f3] p-6">
           <h2 className="mb-2 text-xl font-bold">
             {fetchFailed
-              ? "Shop temporarily unavailable"
+              ? "Shop vorübergehend nicht verfügbar"
               : selectedCategory
-                ? "No products in this category"
-                : "No products available yet"}
+                ? "Keine Produkte in dieser Kategorie"
+                : "Noch keine Produkte verfügbar"}
           </h2>
           <p className="text-gray-700">
             {fetchFailed
-              ? "We couldn’t load the catalogue right now. Please try again later."
+              ? "Der Katalog konnte nicht geladen werden. Bitte versuchen Sie es später erneut."
               : selectedCategory
-                ? "Try another category or view all products."
-                : "The shop is being stocked with rare books, collectibles, and memorabilia. Please check back soon or contact us for inquiries about available items."}
+                ? "Wählen Sie eine andere Kategorie oder sehen Sie sich alle Produkte an."
+                : "Der Shop wird derzeit mit seltenen Büchern, Sammlerstücken und Erinnerungsstücken bestückt. Schauen Sie bald wieder vorbei oder kontaktieren Sie uns bei Fragen zu verfügbaren Artikeln."}
           </p>
         </div>
       )}

@@ -25,7 +25,7 @@ export default function CancelForm({
         disabled={pending}
         className="bg-black text-white px-5 py-3 rounded hover:bg-gray-800 disabled:bg-gray-400"
       >
-        {pending ? "Cancelling…" : "Confirm cancellation"}
+        {pending ? "Stornierung läuft…" : "Stornierung bestätigen"}
       </button>
     </form>
   );

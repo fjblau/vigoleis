@@ -7,7 +7,7 @@ import CancelForm from "./cancel-form";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Cancel purchase request",
+  title: "Kaufanfrage stornieren",
   robots: { index: false, follow: false },
   referrer: "no-referrer",
 };
@@ -23,16 +23,16 @@ export default async function CancelPage({ params }: { params: Promise<{ token: 
 
   return (
     <div className="container mx-auto px-5 py-16 max-w-2xl">
-      <h1 className="mb-6 text-4xl font-bold tracking-tight">Cancel purchase request</h1>
+      <h1 className="mb-6 text-4xl font-bold tracking-tight">Kaufanfrage stornieren</h1>
       {available ? (
         <>
-          <p className="mb-6 text-gray-700">You can cancel this request before it is marked paid. This cannot be undone.</p>
+          <p className="mb-6 text-gray-700">Sie können diese Anfrage stornieren, solange sie noch nicht als bezahlt markiert wurde. Die Stornierung kann nicht rückgängig gemacht werden.</p>
           <CancelForm action={cancelPurchaseRequest.bind(null, token)} />
         </>
       ) : (
-        <p className="mb-6 text-gray-700">This cancellation link is invalid or the request can no longer be cancelled online. Please contact the shop if you need help.</p>
+        <p className="mb-6 text-gray-700">Dieser Stornierungslink ist ungültig oder die Anfrage kann nicht mehr online storniert werden. Wenn Sie Hilfe benötigen, wenden Sie sich bitte an den Shop.</p>
       )}
-      <Link href="/shop" className="inline-block mt-6 underline">Return to shop</Link>
+      <Link href="/shop" className="inline-block mt-6 underline">Zurück zum Shop</Link>
     </div>
   );
 }
