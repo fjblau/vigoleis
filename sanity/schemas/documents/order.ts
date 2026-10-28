@@ -81,6 +81,20 @@ export default defineType({
       validation: (rule) => rule.required().min(1),
     }),
     defineField({
+      name: "subtotal",
+      title: "Items subtotal (EUR)",
+      type: "number",
+      readOnly: true,
+      validation: (rule) => rule.min(0).precision(2),
+    }),
+    defineField({
+      name: "shippingCost",
+      title: "Shipping cost (EUR; blank if pending)",
+      type: "number",
+      readOnly: true,
+      validation: (rule) => rule.min(0).precision(2),
+    }),
+    defineField({
       name: "total",
       title: "Total (EUR)",
       type: "number",
@@ -121,12 +135,6 @@ export default defineType({
       title: "Phone at checkout",
       type: "string",
       readOnly: true,
-      validation: (rule) =>
-        rule.custom((value, context) =>
-          !context.document?.cancellationTokenHash || value?.trim()
-            ? true
-            : "Phone is required for purchase requests.",
-        ),
     }),
     defineField({
       name: "shippingAddress",

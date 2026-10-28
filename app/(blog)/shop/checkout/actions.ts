@@ -5,6 +5,7 @@ import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { hasWriteAccess, writeClient } from "@/sanity/lib/write-client";
 import { customerByEmailQuery, productPricesByIdsQuery } from "@/sanity/lib/queries";
 import { mailConfiguration, merchantEmail, sendShopEmail } from "./mail";
+import { shippingCost } from "./shipping";
 
 interface CheckoutItemInput {
   productId: string;
@@ -38,6 +39,8 @@ export type CreateOrderResult =
       orderId: string;
       orderNumber: string;
       total: number;
+      subtotal: number;
+      shippingCost: number | null;
       email: string;
       confirmationEmailSent: boolean;
       merchantEmailSent: boolean;
@@ -55,6 +58,8 @@ interface StoredOrder {
   _id: string;
   orderNumber: string;
   total: number;
+  subtotal?: number;
+  shippingCost?: number | null;
   customerEmail: string;
   merchantNotificationStatus?: string;
   customerNotificationStatus?: string;
@@ -74,7 +79,7 @@ function validateInput(input: CreateOrderInput): ValidationResult {
   const phone = typeof customer?.phone === "string" ? customer.phone.trim() : "";
   if (name.length < 2 || name.length > 200) return { ok: false, error: "Bitte geben Sie Ihren vollständigen Namen ein." };
   if (!EMAIL_RE.test(email) || email.length > 254) return { ok: false, error: "Bitte geben Sie eine gültige E-Mail-Adresse ein." };
-  if (!phone || phone.length > 60) return { ok: false, error: "Bitte geben Sie Ihre Telefonnummer ein." };
+  if (phone.length > 60) return { ok: false, error: "Die Telefonnummer darf höchstens 60 Zeichen enthalten." };
 
   function address(value: CheckoutAddressInput | undefined) {
     if (!value || typeof value !== "object") return null;
@@ -117,6 +122,8 @@ function resultFromOrder(order: StoredOrder): CreateOrderResult {
     orderId: order._id,
     orderNumber: order.orderNumber,
     total: order.total,
+    subtotal: order.subtotal ?? order.total,
+    shippingCost: order.shippingCost ?? null,
     email: order.customerEmail,
     confirmationEmailSent: order.customerNotificationStatus === "sent",
     merchantEmailSent: order.merchantNotificationStatus === "sent",
@@ -154,7 +161,9 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       lineItems.push({ _key: randomUUID(), product: { _type: "reference", _ref: product._id }, title: product.title, price: round2(price), quantity: item.quantity });
       total += price * item.quantity;
     }
-    total = round2(total);
+    const subtotal = round2(total);
+    const shipping = shippingCost(customer.shippingAddress.country, subtotal);
+    total = round2(subtotal + (shipping ?? 0));
 
     const existingCustomer = await writeClient.fetch<{ _id: string } | null>(customerByEmailQuery, { email: customer.email });
     const customerId = existingCustomer?._id ?? (await writeClient.create({
@@ -167,6 +176,8 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       _type: "order",
       orderNumber,
       items: lineItems,
+      subtotal,
+      shippingCost: shipping,
       total,
       status: "pending",
       customer: { _type: "reference", _ref: customerId },
@@ -188,12 +199,14 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     const addressText = (address: { name: string } & CheckoutAddressInput) =>
       `${address.name}\n${address.street}\n${address.postalCode} ${address.city}\n${address.country}`;
     const lines = lineItems.map((item) => `${item.quantity} × ${item.title} — €${item.price.toFixed(2)} pro Stück`).join("\n");
+    const shippingText = shipping === null ? "wird nach Annahme berechnet und mitgeteilt" : shipping === 0 ? "kostenlos" : `€${shipping.toFixed(2)}`;
+    const pricingText = `Zwischensumme der Artikel: €${subtotal.toFixed(2)}\nVersand: ${shippingText}\nGesamtbetrag${shipping === null ? " ohne Versand" : ""}: €${total.toFixed(2)}`;
     const cancellationUrl = `${config.origin}/shop/cancel/${token}`;
     const deliveries = await Promise.allSettled([
       sendShopEmail(config, merchantEmail, `Kaufanfrage ${orderNumber}`,
-        `Kaufanfrage ${orderNumber}\n\n${lines}\n\nZwischensumme der Artikel: €${total.toFixed(2)} (Versandkosten werden noch bestätigt)\n\nKunde: ${customer.name}\nE-Mail: ${customer.email}\nTelefon: ${customer.phone}\n\nLieferadresse:\n${addressText({ name: customer.name, ...customer.shippingAddress })}\n\nRechnungsadresse:\n${addressText({ name: customer.name, ...customer.billingAddress })}\n\nEs wurde keine Zahlung vorgenommen.`, `purchase-${orderId}-merchant`),
+        `Kaufanfrage ${orderNumber}\n\n${lines}\n\n${pricingText}\n\nKunde: ${customer.name}\nE-Mail: ${customer.email}${customer.phone ? `\nTelefon: ${customer.phone}` : ""}\n\nLieferadresse:\n${addressText({ name: customer.name, ...customer.shippingAddress })}\n\nRechnungsadresse:\n${addressText({ name: customer.name, ...customer.billingAddress })}\n\nEs wurde keine Zahlung vorgenommen.`, `purchase-${orderId}-merchant`),
       sendShopEmail(config, customer.email, `Ihre Kaufanfrage ${orderNumber}`,
-        `Vielen Dank für Ihre Kaufanfrage ${orderNumber}.\n\n${lines}\n\nZwischensumme der Artikel: €${total.toFixed(2)}. Versandkosten und Verfügbarkeit werden manuell bestätigt. Wir melden uns bei Ihnen bezüglich der Rechnung. Es wurde noch keine Zahlung vorgenommen.\n\nSie können Ihre Anfrage stornieren, bevor sie als bezahlt markiert wird. Rufen Sie dazu folgende Seite auf:\n${cancellationUrl}`, `purchase-${orderId}-customer`),
+        `Vielen Dank für Ihre Kaufanfrage ${orderNumber}.\n\n${lines}\n\n${pricingText}\n\nDie Verfügbarkeit wird persönlich bestätigt. Wir melden uns bei Ihnen bezüglich der Rechnung. Es wurde noch keine Zahlung vorgenommen.\n\nSie können Ihre Anfrage stornieren, bevor sie als bezahlt markiert wird. Rufen Sie dazu folgende Seite auf:\n${cancellationUrl}`, `purchase-${orderId}-customer`),
     ]);
     const merchantSent = deliveries[0].status === "fulfilled";
     const customerSent = deliveries[1].status === "fulfilled";
@@ -213,6 +226,8 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       orderId: storedOrder._id,
       orderNumber: storedOrder.orderNumber,
       total: storedOrder.total,
+      subtotal: storedOrder.subtotal ?? storedOrder.total,
+      shippingCost: storedOrder.shippingCost ?? null,
       email: storedOrder.customerEmail,
       merchantEmailSent: merchantSent,
       confirmationEmailSent: customerSent,

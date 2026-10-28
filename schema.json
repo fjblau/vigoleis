@@ -115,6 +115,20 @@
         },
         "optional": true
       },
+      "subtotal": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
+      },
+      "shippingCost": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
+      },
       "total": {
         "type": "objectAttribute",
         "value": {
