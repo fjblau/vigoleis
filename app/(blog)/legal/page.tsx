@@ -1,37 +1,38 @@
 import type { Metadata } from "next";
-import { type PortableTextBlock } from "next-sanity";
 
 import DataRequestForm from "./data-request-form";
 import SelfServiceDataForm from "./self-service-data-form";
-import PortableText from "../portable-text";
-import { sanityFetch } from "@/sanity/lib/fetch";
-import { legalNoticeQuery } from "@/sanity/lib/queries";
 
 export const metadata: Metadata = {
-  title: "Legal Notice",
+  title: "Impressum",
 };
 
-export default async function LegalNoticePage() {
-  const legalNotice = await sanityFetch({ query: legalNoticeQuery });
-
+export default function LegalNoticePage() {
   return (
     <div className="container mx-auto px-5 py-16">
       <h1 className="mb-12 text-6xl font-bold leading-tight tracking-tighter md:text-7xl">
-        {legalNotice?.title || "Legal Notice"}
+        Impressum
       </h1>
-      {legalNotice?.body?.length ? (
-        <PortableText
-          className="max-w-none"
-          value={legalNotice.body as PortableTextBlock[]}
-        />
-      ) : (
-        <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="text-gray-700">
-            The legal notice / imprint content has not been added yet. Please
-            add it through the Sanity CMS.
-          </p>
-        </div>
-      )}
+      <address className="space-y-2 not-italic">
+        <p>Dr. Jürgen Pütz</p>
+        <p>
+          Herbert-Lewin-Straße 1
+          <br />
+          50931 Köln
+        </p>
+        <p>
+          Tel.:{" "}
+          <a className="hover:underline" href="tel:+491636853468">
+            +49 163 68 534 68
+          </a>
+          <br />
+          E-Mail:{" "}
+          <a className="hover:underline" href="mailto:puetz@vigoleis.de">
+            puetz@vigoleis.de
+          </a>
+        </p>
+      </address>
+      <p className="mt-8">Verantwortlich für den Inhalt: Dr. Jürgen Pütz</p>
 
       <SelfServiceDataForm />
       <DataRequestForm />
