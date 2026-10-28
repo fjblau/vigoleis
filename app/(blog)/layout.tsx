@@ -98,24 +98,28 @@ export default async function RootLayout({
                   />
                 ) : (
                   <div className="py-12 text-center">
-                    <p className="text-gray-600">
+                    <p lang="de" className="text-gray-600">
                       © {new Date().getFullYear()} Albert Vigoleis Thelen
-                      Tribute Site. All rights reserved.
+                      – eine Website zu seinem Leben und Werk.
                     </p>
                   </div>
                 )}
-                <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-accent-2 py-6 text-sm text-gray-600">
+                <nav
+                  lang="de"
+                  aria-label="Rechtliche Informationen"
+                  className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-accent-2 py-6 text-sm text-gray-600"
+                >
                   <Link
                     href="/privacy"
                     className="hover:underline transition-colors duration-200"
                   >
-                    Privacy Policy
+                    Datenschutzerklärung
                   </Link>
                   <Link
                     href="/terms"
                     className="hover:underline transition-colors duration-200"
                   >
-                    Terms &amp; Conditions
+                    Allgemeine Geschäftsbedingungen
                   </Link>
                   <Link
                     href="/legal"

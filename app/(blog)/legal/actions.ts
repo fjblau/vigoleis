@@ -45,7 +45,7 @@ const MAX_EMAIL = 254;
 const MAX_MESSAGE = 5000;
 
 const SUCCESS_MESSAGE =
-  "Your data subject request has been received. We will respond to your email shortly.";
+  "Ihre Anfrage zu personenbezogenen Daten ist eingegangen. Wir antworten Ihnen in Kürze per E-Mail.";
 
 function getWriteClient() {
   const token = process.env.SANITY_API_WRITE_TOKEN;
@@ -72,26 +72,26 @@ export async function submitDataRequest(
   const errors: DataRequestState["errors"] = {};
 
   if (!requestType || !ALLOWED_REQUEST_TYPES.has(requestType)) {
-    errors.requestType = "Please select a request type.";
+    errors.requestType = "Bitte wählen Sie die Art der Anfrage.";
   }
   if (!name) {
-    errors.name = "Please enter your name.";
+    errors.name = "Bitte geben Sie Ihren Namen ein.";
   } else if (name.length > MAX_NAME) {
-    errors.name = `Name must be ${MAX_NAME} characters or fewer.`;
+    errors.name = `Der Name darf höchstens ${MAX_NAME} Zeichen lang sein.`;
   }
   if (!email) {
-    errors.email = "Please enter your email address.";
+    errors.email = "Bitte geben Sie Ihre E-Mail-Adresse ein.";
   } else if (email.length > MAX_EMAIL || !EMAIL_RE.test(email)) {
-    errors.email = "Please enter a valid email address.";
+    errors.email = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
   }
   if (message.length > MAX_MESSAGE) {
-    errors.message = `Message must be ${MAX_MESSAGE} characters or fewer.`;
+    errors.message = `Die Nachricht darf höchstens ${MAX_MESSAGE} Zeichen lang sein.`;
   }
 
   if (Object.keys(errors).length > 0) {
     return {
       ok: false,
-      message: "Please correct the errors below.",
+      message: "Bitte korrigieren Sie die folgenden Fehler.",
       errors,
       values: { name, email, requestType, message },
     };
@@ -130,7 +130,7 @@ export async function submitDataRequest(
     return {
       ok: false,
       message:
-        "Sorry, we could not submit your request right now. Please try again later or email us directly.",
+        "Ihre Anfrage konnte derzeit nicht übermittelt werden. Bitte versuchen Sie es später erneut oder schreiben Sie uns direkt per E-Mail.",
       values: { name, email, requestType, message },
     };
   }
@@ -146,7 +146,7 @@ interface OrderIdRow {
 }
 
 const REMOVAL_SUCCESS_MESSAGE =
-  "Your personal data and order history have been deleted from our store.";
+  "Ihre personenbezogenen Daten und Ihre Bestellhistorie wurden aus unserem Shop gelöscht.";
 
 export async function deleteMyData(
   _prev: DataRemovalState,
@@ -157,18 +157,18 @@ export async function deleteMyData(
 
   const errors: DataRemovalState["errors"] = {};
   if (!orderReference) {
-    errors.orderReference = "Please enter your order reference.";
+    errors.orderReference = "Bitte geben Sie Ihre Bestellnummer ein.";
   }
   if (!email) {
-    errors.email = "Please enter your email address.";
+    errors.email = "Bitte geben Sie Ihre E-Mail-Adresse ein.";
   } else if (!EMAIL_RE.test(email)) {
-    errors.email = "Please enter a valid email address.";
+    errors.email = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
   }
 
   if (Object.keys(errors).length > 0) {
     return {
       ok: false,
-      message: "Please correct the errors below.",
+      message: "Bitte korrigieren Sie die folgenden Fehler.",
       errors,
       values: { orderReference, email },
     };
@@ -179,7 +179,7 @@ export async function deleteMyData(
     return {
       ok: false,
       message:
-        "Data removal is not available because the server is not configured for deletion. Please email us directly and we will handle your request.",
+        "Die Datenlöschung ist derzeit nicht verfügbar. Bitte schreiben Sie uns direkt per E-Mail, damit wir Ihre Anfrage bearbeiten können.",
       values: { orderReference, email },
     };
   }
@@ -194,8 +194,8 @@ export async function deleteMyData(
       return {
         ok: false,
         message:
-          "We could not find an order matching that reference and email.",
-        errors: { orderReference: "Order not found." },
+          "Wir konnten keine Bestellung mit dieser Bestellnummer und E-Mail-Adresse finden.",
+        errors: { orderReference: "Bestellung nicht gefunden." },
         values: { orderReference, email },
       };
     }
@@ -204,8 +204,8 @@ export async function deleteMyData(
       return {
         ok: false,
         message:
-          "We could not find an order matching that reference and email.",
-        errors: { email: "Email does not match this order." },
+          "Wir konnten keine Bestellung mit dieser Bestellnummer und E-Mail-Adresse finden.",
+        errors: { email: "Die E-Mail-Adresse stimmt nicht mit dieser Bestellung überein." },
         values: { orderReference, email },
       };
     }
@@ -227,7 +227,7 @@ export async function deleteMyData(
     return {
       ok: false,
       message:
-        "Something went wrong while deleting your data. Please try again later or email us directly.",
+        "Bei der Löschung Ihrer Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut oder schreiben Sie uns direkt per E-Mail.",
       values: { orderReference, email },
     };
   }

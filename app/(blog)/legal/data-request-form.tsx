@@ -34,12 +34,13 @@ export default function DataRequestForm() {
         id="data-request-heading"
         className="text-3xl font-bold tracking-tight mb-3"
       >
-        Data Subject Request
+        Anfrage zu personenbezogenen Daten
       </h2>
       <p className="mb-6 text-gray-600">
-        Under the GDPR you have the right to request access to, export of, or
-        deletion of the personal data we hold about you. Use the form below and
-        we will respond to your email.
+        Nach der Datenschutz-Grundverordnung (DSGVO) können Sie Auskunft über
+        Ihre bei uns gespeicherten personenbezogenen Daten, deren Export oder
+        Löschung beantragen. Nutzen Sie dafür das folgende Formular. Wir
+        antworten Ihnen per E-Mail.
       </p>
 
       {state.ok && state.message && (
@@ -65,7 +66,7 @@ export default function DataRequestForm() {
             htmlFor="data-request-type"
             className="block text-sm font-semibold mb-1"
           >
-            Request type
+            Art der Anfrage
           </label>
           <select
             id="data-request-type"
@@ -76,11 +77,11 @@ export default function DataRequestForm() {
             className="w-full rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring focus:ring-gray-400"
           >
             <option value="" disabled>
-              Select a request type…
+              Bitte wählen Sie die Art der Anfrage…
             </option>
-            <option value="access">Access my data</option>
-            <option value="export">Export my data</option>
-            <option value="deletion">Delete my data</option>
+            <option value="access">Auskunft über meine Daten</option>
+            <option value="export">Meine Daten exportieren</option>
+            <option value="deletion">Meine Daten löschen</option>
           </select>
           {errors?.requestType && (
             <p
@@ -121,7 +122,7 @@ export default function DataRequestForm() {
             htmlFor="data-request-email"
             className="block text-sm font-semibold mb-1"
           >
-            Email
+            E-Mail-Adresse
           </label>
           <input
             id="data-request-email"
@@ -148,7 +149,7 @@ export default function DataRequestForm() {
             htmlFor="data-request-message"
             className="block text-sm font-semibold mb-1"
           >
-            Message{" "}
+            Nachricht{" "}
             <span className="font-normal text-gray-500">(optional)</span>
           </label>
           <textarea
@@ -158,7 +159,7 @@ export default function DataRequestForm() {
             defaultValue={values?.message ?? ""}
             aria-invalid={!!errors?.message}
             aria-describedby="data-request-message-error"
-            placeholder="e.g. the order reference or data you want to access or delete"
+            placeholder="z. B. Bestellnummer oder die Daten, über die Sie Auskunft wünschen"
             className="w-full rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring focus:ring-gray-400"
           />
           {errors?.message && (
@@ -176,7 +177,7 @@ export default function DataRequestForm() {
           disabled={pending}
           className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors disabled:opacity-60"
         >
-          {pending ? "Submitting…" : "Submit request"}
+          {pending ? "Wird gesendet…" : "Anfrage absenden"}
         </button>
       </form>
     </section>
