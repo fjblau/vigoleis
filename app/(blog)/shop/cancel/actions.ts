@@ -34,11 +34,11 @@ export async function canCancelPurchaseRequest(token: string): Promise<boolean> 
 }
 
 export async function cancelPurchaseRequest(token: string, _previous: CancellationState): Promise<CancellationState> {
-  if (!hasWriteAccess || !TOKEN_RE.test(token)) return { status: "unavailable", message: "This cancellation link is invalid or no longer available." };
+  if (!hasWriteAccess || !TOKEN_RE.test(token)) return { status: "unavailable", message: "Dieser Stornierungslink ist ungültig oder nicht mehr verfügbar." };
   try {
     const order = await findCancellableOrder(token);
     if (!order || order.status !== "pending" || order.cancelledAt) {
-      return { status: "unavailable", message: "This request can no longer be cancelled using this link." };
+      return { status: "unavailable", message: "Diese Anfrage kann über diesen Link nicht mehr storniert werden." };
     }
     try {
       await writeClient.patch(order._id).ifRevisionId(order._rev).set({
@@ -48,15 +48,15 @@ export async function cancelPurchaseRequest(token: string, _previous: Cancellati
       }).unset(["cancellationTokenHash"]).commit();
     } catch (error) {
       console.error("Cancellation conflict or storage failure:", error);
-      return { status: "unavailable", message: "This request could not be cancelled. Its status may have changed; please contact the shop." };
+      return { status: "unavailable", message: "Diese Anfrage konnte nicht storniert werden. Möglicherweise hat sich ihr Status geändert. Bitte wenden Sie sich an den Shop." };
     }
 
     let sent = false;
     const config = mailConfiguration();
     if (config) {
       try {
-        await sendShopEmail(config, merchantEmail, `Cancelled purchase request ${order.orderNumber}`,
-          `Purchase request ${order.orderNumber} has been cancelled by the customer. Please do not invoice or fulfill it.`,
+        await sendShopEmail(config, merchantEmail, `Kaufanfrage ${order.orderNumber} storniert`,
+          `Der Kunde hat die Kaufanfrage ${order.orderNumber} storniert. Bitte stellen Sie keine Rechnung aus und erfüllen Sie die Bestellung nicht.`,
           `cancel-${order._id}`);
         sent = true;
       } catch (error) {
@@ -73,11 +73,11 @@ export async function cancelPurchaseRequest(token: string, _previous: Cancellati
     return {
       status: "cancelled",
       message: sent
-        ? "Your purchase request has been cancelled. No payment was taken."
-        : "Your purchase request has been cancelled, but we could not confirm the shop was notified by email. Please contact the shop directly.",
+        ? "Ihre Kaufanfrage wurde storniert. Es wurde keine Zahlung abgebucht."
+        : "Ihre Kaufanfrage wurde storniert, aber wir konnten nicht bestätigen, dass der Shop per E-Mail benachrichtigt wurde. Bitte wenden Sie sich direkt an den Shop.",
     };
   } catch (error) {
     console.error("Failed to check cancellation request:", error);
-    return { status: "error", message: "Cancellation is temporarily unavailable. Please contact the shop." };
+    return { status: "error", message: "Die Stornierung ist vorübergehend nicht verfügbar. Bitte wenden Sie sich an den Shop." };
   }
 }

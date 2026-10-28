@@ -43,7 +43,7 @@ export default function AddToCart({ product, disabled, compact = false }: AddToC
           ? "-mr-2 px-2 py-2 text-sm font-semibold text-gray-700 transition-colors hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:text-gray-400"
           : "bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"}
       >
-        {added ? "Added to cart" : "Add to cart"}
+        {added ? "Im Warenkorb" : "In den Warenkorb"}
       </button>
       {added && (
         <Link
@@ -52,7 +52,7 @@ export default function AddToCart({ product, disabled, compact = false }: AddToC
             ? "text-sm text-gray-700 underline underline-offset-2 hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
             : "text-cyan-600 underline hover:text-cyan-700 transition-colors"}
         >
-          Go to checkout
+          Warenkorb ansehen
         </Link>
       )}
     </div>

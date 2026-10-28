@@ -57,8 +57,8 @@ export async function generateMetadata(
     return {
       title: product?.title,
       description: product?.category?.title
-        ? `${product.category.title} from the Albert Vigoleis Thelen memorabilia shop`
-        : "Available from the Albert Vigoleis Thelen memorabilia shop",
+        ? `${product.category.title} im Albert-Vigoleis-Thelen-Shop`
+        : "Erhältlich im Albert-Vigoleis-Thelen-Shop",
       openGraph: {
         images: ogImage ? [ogImage, ...previousImages] : previousImages,
       },
@@ -67,7 +67,7 @@ export async function generateMetadata(
     console.error("Failed to generate metadata:", error);
     return {
       title: "Shop",
-      description: "Memorabilia shop",
+      description: "Shop für Sammlerstücke",
     };
   }
 }
@@ -101,7 +101,7 @@ export default async function ProductPage({ params }: Props) {
         href="/shop"
         className="inline-block mb-8 text-gray-600 hover:text-black hover:underline"
       >
-        ← Back to shop
+        ← Zurück zum Shop
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
@@ -119,7 +119,7 @@ export default async function ProductPage({ params }: Props) {
             </div>
           ) : (
             <div className="flex aspect-[3/4] items-center justify-center bg-gray-100 rounded-lg">
-              <p className="text-gray-500">No image</p>
+              <p className="text-gray-500">Kein Bild</p>
             </div>
           )}
 
@@ -140,7 +140,7 @@ export default async function ProductPage({ params }: Props) {
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">
-                      <p className="text-gray-500 text-xs">No image</p>
+                      <p className="text-gray-500 text-xs">Kein Bild</p>
                     </div>
                   )}
                 </div>
@@ -165,11 +165,11 @@ export default async function ProductPage({ params }: Props) {
           <div className="mb-8">
             {outOfStock ? (
               <span className="inline-block bg-gray-200 text-gray-700 text-sm font-semibold px-3 py-1 rounded">
-                Out of stock
+                Nicht vorrätig
               </span>
             ) : (
               <span className="inline-block bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded">
-                Available to request
+                Auf Anfrage erhältlich
               </span>
             )}
           </div>
@@ -186,8 +186,8 @@ export default async function ProductPage({ params }: Props) {
               disabled={outOfStock}
             />
             <p className="mt-3 text-sm text-gray-600">
-              Submit a purchase request at checkout. We will confirm shipping and
-              arrange payment by invoice; no payment is taken online.
+              Senden Sie an der Kasse eine Kaufanfrage. Wir bestätigen die Versandkosten
+              und vereinbaren die Zahlung per Rechnung; online wird nichts bezahlt.
             </p>
           </div>
 
@@ -201,8 +201,8 @@ export default async function ProductPage({ params }: Props) {
 
           {(product.description?.length ?? 0) === 0 && (
             <p className="text-gray-600">
-              Details about this item will be added soon. Please contact us for
-              more information.
+              Weitere Angaben zu diesem Artikel folgen in Kürze. Für weitere
+              Informationen kontaktieren Sie uns bitte.
             </p>
           )}
         </div>

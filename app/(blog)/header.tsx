@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 
+import CartIndicator from "./cart-indicator";
+
 export default function Header() {
   return (
     <header className="border-b border-accent-2 bg-white">
@@ -72,6 +74,9 @@ export default function Header() {
               >
                 Shop
               </Link>
+            </li>
+            <li>
+              <CartIndicator />
             </li>
           </ul>
         </nav>

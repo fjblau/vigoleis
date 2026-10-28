@@ -106,7 +106,7 @@ export default function Checkout() {
           setFormError(res.error);
         }
       } catch {
-        setFormError("Could not submit your request. Please try again.");
+        setFormError("Ihre Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.");
       }
     });
   }
@@ -114,7 +114,7 @@ export default function Checkout() {
   if (!mounted) {
     return (
       <p className="text-gray-500" aria-live="polite">
-        Loading your cart…
+        Warenkorb wird geladen…
       </p>
     );
   }
@@ -123,36 +123,37 @@ export default function Checkout() {
     return (
       <div className="mx-auto max-w-2xl">
         <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tighter md:text-6xl">
-          Purchase request received
+          Kaufanfrage eingegangen
         </h1>
         <div className="border border-gray-200 rounded-lg p-6">
           <p className="mb-2 text-lg">
-            Thank you, your purchase request has been recorded. No payment has
-            been taken.
+            Vielen Dank, Ihre Kaufanfrage wurde erfasst. Es wurde keine Zahlung
+            vorgenommen.
           </p>
           <p className="mb-1 text-gray-700">
-            <span className="font-semibold">Request number:</span>{" "}
+            <span className="font-semibold">Anfragenummer:</span>{" "}
             {result.orderNumber}
           </p>
           <p className="mb-4 text-gray-700">
-            <span className="font-semibold">Item subtotal:</span> €
+            <span className="font-semibold">Zwischensumme:</span> €
             {result.total.toFixed(2)}
           </p>
           {result.confirmationEmailSent ? (
             <p className="text-sm text-gray-600">
-              A confirmation email with a cancellation link is on its way to{" "}
-              <span className="font-medium">{result.email}</span>. We will
-              confirm shipping and arrange payment by invoice.
+              Eine Bestätigungs-E-Mail mit einem Link zur Stornierung wurde an{" "}
+              <span className="font-medium">{result.email}</span> gesendet. Wir
+              bestätigen die Versandkosten und vereinbaren die Zahlung per Rechnung.
             </p>
           ) : (
             <p className="text-sm text-gray-600">
-              We will confirm shipping and arrange payment by invoice. We
-              could not confirm delivery of a cancellation link by email. Please contact the shop if you need to cancel.
+              Wir bestätigen die Versandkosten und vereinbaren die Zahlung per Rechnung.
+              Der Versand einer E-Mail mit dem Link zur Stornierung konnte nicht bestätigt werden.
+              Bitte kontaktieren Sie den Shop, wenn Sie Ihre Anfrage stornieren möchten.
             </p>
           )}
           {!result.merchantEmailSent && (
             <p className="mt-3 text-sm text-red-700" role="alert">
-              We could not confirm that the shop received an email about your request. Please contact the shop directly and quote your request number.
+              Wir konnten nicht bestätigen, dass der Shop eine E-Mail zu Ihrer Anfrage erhalten hat. Bitte kontaktieren Sie den Shop direkt und nennen Sie Ihre Anfragenummer.
             </p>
           )}
         </div>
@@ -161,7 +162,7 @@ export default function Checkout() {
             href="/shop"
             className="bg-black text-white px-5 py-3 rounded hover:bg-gray-800 transition-colors"
           >
-            Continue shopping
+            Weiter einkaufen
           </Link>
           <button
             type="button"
@@ -176,7 +177,7 @@ export default function Checkout() {
             }}
             className="border border-gray-300 px-5 py-3 rounded hover:bg-gray-50 transition-colors"
           >
-            Place another order
+            Weitere Anfrage stellen
           </button>
         </div>
       </div>
@@ -187,15 +188,15 @@ export default function Checkout() {
     return (
       <div className="mx-auto max-w-2xl">
         <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tighter md:text-6xl">
-          Checkout
+          Warenkorb und Kaufanfrage
         </h1>
         <div className="border border-gray-200 rounded-lg p-6 text-center">
-          <p className="mb-4 text-lg text-gray-700">Your cart is empty.</p>
+          <p className="mb-4 text-lg text-gray-700">Ihr Warenkorb ist leer.</p>
           <Link
             href="/shop"
             className="inline-block bg-black text-white px-5 py-3 rounded hover:bg-gray-800 transition-colors"
           >
-            Browse the shop
+            Zum Shop
           </Link>
         </div>
       </div>
@@ -205,12 +206,12 @@ export default function Checkout() {
   return (
     <div className="mx-auto max-w-5xl">
       <h1 className="mb-8 text-5xl font-bold leading-tight tracking-tighter md:text-6xl">
-        Checkout
+        Warenkorb und Kaufanfrage
       </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-        <section aria-label="Your cart">
-          <h2 className="mb-4 text-xl font-bold">Your cart</h2>
+        <section aria-label="Ihr Warenkorb">
+          <h2 className="mb-4 text-xl font-bold">Ihr Warenkorb</h2>
           <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
             {items.map((item) => (
               <li key={item.productId} className="flex items-center gap-4 p-4">
@@ -222,7 +223,7 @@ export default function Checkout() {
                     {item.title}
                   </Link>
                   <p className="text-sm text-gray-600">
-                    €{Number(item.price).toFixed(2)} each
+                    €{Number(item.price).toFixed(2)} pro Stück
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -231,7 +232,7 @@ export default function Checkout() {
                     onClick={() =>
                       updateQuantity(item.productId, item.quantity - 1)
                     }
-                    aria-label={`Decrease quantity of ${item.title}`}
+                    aria-label={`Anzahl von ${item.title} verringern`}
                     className="h-8 w-8 rounded border border-gray-300 hover:bg-gray-100 transition-colors"
                   >
                     −
@@ -244,7 +245,7 @@ export default function Checkout() {
                     onClick={() =>
                       updateQuantity(item.productId, item.quantity + 1)
                     }
-                    aria-label={`Increase quantity of ${item.title}`}
+                    aria-label={`Anzahl von ${item.title} erhöhen`}
                     className="h-8 w-8 rounded border border-gray-300 hover:bg-gray-100 transition-colors"
                   >
                     +
@@ -256,7 +257,7 @@ export default function Checkout() {
                 <button
                   type="button"
                   onClick={() => removeItem(item.productId)}
-                  aria-label={`Remove ${item.title} from cart`}
+                  aria-label={`${item.title} aus dem Warenkorb entfernen`}
                   className="text-gray-400 hover:text-red-600 transition-colors"
                 >
                   ✕
@@ -270,20 +271,20 @@ export default function Checkout() {
               onClick={clearCart}
               className="text-sm text-gray-500 hover:text-black hover:underline transition-colors"
             >
-              Clear cart
+              Warenkorb leeren
             </button>
             <div className="text-lg font-bold">
-              Subtotal: €{subtotal.toFixed(2)}
+              Zwischensumme: €{subtotal.toFixed(2)}
             </div>
           </div>
         </section>
 
-        <section aria-label="Your details">
-          <h2 className="mb-4 text-xl font-bold">Your details</h2>
+        <section aria-label="Ihre Angaben">
+          <h2 className="mb-4 text-xl font-bold">Ihre Angaben</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Field
               id="name"
-              label="Full name"
+              label="Vollständiger Name"
               value={form.name}
               onChange={(v) => updateField("name", v)}
               autoComplete="name"
@@ -291,7 +292,7 @@ export default function Checkout() {
             />
             <Field
               id="email"
-              label="Email"
+              label="E-Mail-Adresse"
               type="email"
               value={form.email}
               onChange={(v) => updateField("email", v)}
@@ -300,7 +301,7 @@ export default function Checkout() {
             />
             <Field
               id="phone"
-              label="Phone number"
+              label="Telefonnummer"
               type="tel"
               value={form.phone}
               onChange={(v) => updateField("phone", v)}
@@ -308,7 +309,7 @@ export default function Checkout() {
               required
             />
             <fieldset className="space-y-4 border-t border-gray-200 pt-4">
-              <legend className="text-lg font-semibold">Shipping address</legend>
+              <legend className="text-lg font-semibold">Lieferadresse</legend>
               <AddressFields
                 prefix="shipping"
                 address={form.shippingAddress}
@@ -318,7 +319,7 @@ export default function Checkout() {
               />
             </fieldset>
             <fieldset className="space-y-4 border-t border-gray-200 pt-4">
-              <legend className="text-lg font-semibold">Billing address</legend>
+              <legend className="text-lg font-semibold">Rechnungsadresse</legend>
               <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                   type="checkbox"
@@ -326,7 +327,7 @@ export default function Checkout() {
                   onChange={(event) => setSameAsShipping(event.target.checked)}
                   className="h-4 w-4 accent-black"
                 />
-                Same as shipping address
+                Wie Lieferadresse
               </label>
               {!sameAsShipping && (
                 <AddressFields
@@ -350,7 +351,7 @@ export default function Checkout() {
 
             <div className="border-t border-gray-200 pt-4">
               <div className="mb-4 flex items-center justify-between text-lg font-bold">
-                <span>Item subtotal</span>
+                <span>Zwischensumme</span>
                 <span className="tabular-nums">€{subtotal.toFixed(2)}</span>
               </div>
               <button
@@ -358,13 +359,13 @@ export default function Checkout() {
                 disabled={pending || items.length === 0}
                 className="w-full bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
-                {pending ? "Submitting request…" : "Submit purchase request"}
+                {pending ? "Anfrage wird gesendet…" : "Kaufanfrage absenden"}
               </button>
             </div>
 
             <p className="text-xs text-gray-500">
-              Shipping costs and availability are confirmed manually. No online
-              payment is taken; we will contact you about shipping and invoicing.
+              Versandkosten und Verfügbarkeit werden persönlich bestätigt. Es erfolgt
+              keine Online-Zahlung; wir kontaktieren Sie zu Versand und Rechnungsstellung.
             </p>
           </form>
         </section>
@@ -386,7 +387,7 @@ function AddressFields({
     <div className="space-y-4">
       <Field
         id={`${prefix}-street`}
-        label="Street and number"
+        label="Straße und Hausnummer"
         value={address.street}
         onChange={(value) => onChange("street", value)}
         autoComplete={`${prefix} address-line1`}
@@ -395,7 +396,7 @@ function AddressFields({
       <div className="grid grid-cols-2 gap-4">
         <Field
           id={`${prefix}-postalCode`}
-          label="Postal code"
+          label="Postleitzahl"
           value={address.postalCode}
           onChange={(value) => onChange("postalCode", value)}
           autoComplete={`${prefix} postal-code`}
@@ -403,7 +404,7 @@ function AddressFields({
         />
         <Field
           id={`${prefix}-city`}
-          label="City"
+          label="Ort"
           value={address.city}
           onChange={(value) => onChange("city", value)}
           autoComplete={`${prefix} address-level2`}
@@ -412,7 +413,7 @@ function AddressFields({
       </div>
       <Field
         id={`${prefix}-country`}
-        label="Country"
+        label="Land"
         value={address.country}
         onChange={(value) => onChange("country", value)}
         autoComplete={`${prefix} country-name`}
