@@ -49,7 +49,7 @@ export default function SelfServiceDataForm() {
         URL.revokeObjectURL(url);
         setExportStatus({
           ok: true,
-          message: "Your data has been downloaded as a JSON file.",
+          message: "Ihre Daten wurden als JSON-Datei heruntergeladen.",
         });
       } else {
         const data = (await res.json().catch(() => null)) as {
@@ -59,13 +59,13 @@ export default function SelfServiceDataForm() {
           ok: false,
           message:
             data?.error ||
-            "We could not find an order matching that reference and email.",
+            "Wir konnten keine Bestellung mit dieser Bestellnummer und E-Mail-Adresse finden.",
         });
       }
     } catch {
       setExportStatus({
         ok: false,
-        message: "Something went wrong while exporting your data. Please try again later.",
+        message: "Beim Export Ihrer Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
       });
     } finally {
       setExportPending(false);
@@ -81,21 +81,22 @@ export default function SelfServiceDataForm() {
         id="self-service-data-heading"
         className="text-3xl font-bold tracking-tight mb-3"
       >
-        Self-service: export or delete your data
+        Ihre Daten selbst exportieren oder löschen
       </h2>
       <p className="mb-10 text-gray-600">
-        If you have placed an order, you can exercise your GDPR rights directly.
-        Enter your order reference (e.g. <code>ORD-20260821-A1B2C3</code>) and the
-        email address used at checkout. We verify ownership against your order
-        before returning or removing any data.
+        Wenn Sie eine Bestellung aufgegeben haben, können Sie Ihre Rechte nach
+        der DSGVO direkt ausüben. Geben Sie Ihre Bestellnummer (z. B.
+        <code>ORD-20260821-A1B2C3</code>) und die bei der Bestellung verwendete
+        E-Mail-Adresse ein. Bevor wir Daten bereitstellen oder löschen, prüfen
+        wir anhand Ihrer Bestellung, ob Sie dazu berechtigt sind.
       </p>
 
       <div className="grid gap-10 md:grid-cols-2">
         <div>
-          <h3 className="text-xl font-semibold mb-3">Export your data</h3>
+          <h3 className="text-xl font-semibold mb-3">Daten exportieren</h3>
           <p className="mb-4 text-sm text-gray-600">
-            Download a JSON file containing your customer profile and full order
-            history.
+            Laden Sie eine JSON-Datei mit Ihrem Kundenprofil und Ihrer gesamten
+            Bestellhistorie herunter.
           </p>
           {exportStatus && (
             <div
@@ -115,7 +116,7 @@ export default function SelfServiceDataForm() {
                 htmlFor="export-order-ref"
                 className="block text-sm font-semibold mb-1"
               >
-                Order reference
+                Bestellnummer
               </label>
               <input
                 id="export-order-ref"
@@ -133,7 +134,7 @@ export default function SelfServiceDataForm() {
                 htmlFor="export-email"
                 className="block text-sm font-semibold mb-1"
               >
-                Email
+                E-Mail-Adresse
               </label>
               <input
                 id="export-email"
@@ -151,16 +152,16 @@ export default function SelfServiceDataForm() {
               disabled={exportPending}
               className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors disabled:opacity-60"
             >
-              {exportPending ? "Preparing…" : "Download my data"}
+              {exportPending ? "Wird vorbereitet…" : "Meine Daten herunterladen"}
             </button>
           </form>
         </div>
 
         <div>
-          <h3 className="text-xl font-semibold mb-3">Delete your data</h3>
+          <h3 className="text-xl font-semibold mb-3">Daten löschen</h3>
           <p className="mb-4 text-sm text-gray-600">
-            Permanently remove your customer profile and all associated orders.
-            This cannot be undone.
+            Löschen Sie Ihr Kundenprofil und alle zugehörigen Bestellungen dauerhaft.
+            Dies kann nicht rückgängig gemacht werden.
           </p>
           {removalState.ok && removalState.message && (
             <div
@@ -184,7 +185,7 @@ export default function SelfServiceDataForm() {
                 htmlFor="delete-order-ref"
                 className="block text-sm font-semibold mb-1"
               >
-                Order reference
+                Bestellnummer
               </label>
               <input
                 id="delete-order-ref"
@@ -211,7 +212,7 @@ export default function SelfServiceDataForm() {
                 htmlFor="delete-email"
                 className="block text-sm font-semibold mb-1"
               >
-                Email
+                E-Mail-Adresse
               </label>
               <input
                 id="delete-email"
@@ -235,7 +236,7 @@ export default function SelfServiceDataForm() {
               disabled={removalPending}
               className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 transition-colors disabled:opacity-60"
             >
-              {removalPending ? "Deleting…" : "Delete my data"}
+              {removalPending ? "Wird gelöscht…" : "Meine Daten löschen"}
             </button>
           </form>
         </div>

@@ -49,21 +49,21 @@ export async function POST(request: Request) {
   try {
     formData = await request.formData();
   } catch {
-    return jsonError("Invalid request.", 400);
+    return jsonError("Ungültige Anfrage.", 400);
   }
 
   const orderReference = String(formData.get("orderReference") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
 
   if (!orderReference) {
-    return jsonError("Please enter your order reference.", 400);
+    return jsonError("Bitte geben Sie Ihre Bestellnummer ein.", 400);
   }
   if (!email || !EMAIL_RE.test(email)) {
-    return jsonError("Please enter a valid email address.", 400);
+    return jsonError("Bitte geben Sie eine gültige E-Mail-Adresse ein.", 400);
   }
 
   if (!hasWriteAccess) {
-    return jsonError("Data export is not available.", 503);
+    return jsonError("Der Datenexport ist derzeit nicht verfügbar.", 503);
   }
 
   try {
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
 
     if (!order || !customerId || customerEmail !== email) {
       return jsonError(
-        "We could not find an order matching that reference and email.",
+        "Wir konnten keine Bestellung mit dieser Bestellnummer und E-Mail-Adresse finden.",
         404,
       );
     }
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("[dataExport] Failed to export customer data:", error);
     return jsonError(
-      "Something went wrong while exporting your data. Please try again later.",
+      "Beim Export Ihrer Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
       500,
     );
   }
