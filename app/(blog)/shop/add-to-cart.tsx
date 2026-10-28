@@ -52,7 +52,7 @@ export default function AddToCart({ product, disabled, compact = false }: AddToC
             ? "text-sm text-gray-700 underline underline-offset-2 hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
             : "text-cyan-600 underline hover:text-cyan-700 transition-colors"}
         >
-          Go to checkout
+          View cart
         </Link>
       )}
     </div>

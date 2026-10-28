@@ -16,7 +16,7 @@ export default function CartIndicator() {
   return (
     <Link
       href="/shop/checkout"
-      aria-label={`Checkout with ${count} item${count === 1 ? "" : "s"}`}
+      aria-label={mounted ? `View cart with ${count} item${count === 1 ? "" : "s"}` : "View cart"}
       className="relative inline-flex items-center gap-1 hover:underline transition-colors duration-200"
     >
       Cart
