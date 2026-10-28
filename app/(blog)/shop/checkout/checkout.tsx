@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 
 import { useCart } from "../../cart-provider";
 import { createOrder, type CreateOrderResult } from "./actions";
+import { shippingCost } from "./shipping";
 
 interface AddressState {
   street: string;
@@ -45,6 +46,7 @@ export default function Checkout() {
   >(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const shipping = shippingCost(form.shippingAddress.country, subtotal);
   const [sameAsShipping, setSameAsShipping] = useState(true);
   const requestId = useRef<string | null>(null);
 
@@ -134,19 +136,27 @@ export default function Checkout() {
             <span className="font-semibold">Anfragenummer:</span>{" "}
             {result.orderNumber}
           </p>
-          <p className="mb-4 text-gray-700">
+          <p className="mb-1 text-gray-700">
             <span className="font-semibold">Zwischensumme:</span> €
+            {result.subtotal.toFixed(2)}
+          </p>
+          <p className="mb-1 text-gray-700">
+            <span className="font-semibold">Versand:</span>{" "}
+            {result.shippingCost === null ? "Wird nach Annahme berechnet und mitgeteilt" : result.shippingCost === 0 ? "Kostenlos" : `€${result.shippingCost.toFixed(2)}`}
+          </p>
+          <p className="mb-4 text-gray-700">
+            <span className="font-semibold">Gesamtbetrag{result.shippingCost === null ? " ohne Versand" : ""}:</span> €
             {result.total.toFixed(2)}
           </p>
           {result.confirmationEmailSent ? (
             <p className="text-sm text-gray-600">
               Eine Bestätigungs-E-Mail mit einem Link zur Stornierung wurde an{" "}
               <span className="font-medium">{result.email}</span> gesendet. Wir
-              bestätigen die Versandkosten und vereinbaren die Zahlung per Rechnung.
+              melden uns zur Verfügbarkeit und vereinbaren die Zahlung per Rechnung.
             </p>
           ) : (
             <p className="text-sm text-gray-600">
-              Wir bestätigen die Versandkosten und vereinbaren die Zahlung per Rechnung.
+              Wir melden uns zur Verfügbarkeit und vereinbaren die Zahlung per Rechnung.
               Der Versand einer E-Mail mit dem Link zur Stornierung konnte nicht bestätigt werden.
               Bitte kontaktieren Sie den Shop, wenn Sie Ihre Anfrage stornieren möchten.
             </p>
@@ -301,12 +311,11 @@ export default function Checkout() {
             />
             <Field
               id="phone"
-              label="Telefonnummer"
+              label="Telefonnummer (optional)"
               type="tel"
               value={form.phone}
               onChange={(v) => updateField("phone", v)}
               autoComplete="tel"
-              required
             />
             <fieldset className="space-y-4 border-t border-gray-200 pt-4">
               <legend className="text-lg font-semibold">Lieferadresse</legend>
@@ -350,22 +359,29 @@ export default function Checkout() {
             )}
 
             <div className="border-t border-gray-200 pt-4">
-              <div className="mb-4 flex items-center justify-between text-lg font-bold">
+              <div className="mb-2 flex items-center justify-between text-lg font-bold">
                 <span>Zwischensumme</span>
                 <span className="tabular-nums">€{subtotal.toFixed(2)}</span>
+              </div>
+              <div className="mb-2 flex items-center justify-between text-sm">
+                <span>Versand</span>
+                <span>{shipping === null ? "Wird nach Annahme berechnet und mitgeteilt" : shipping === 0 ? "Kostenlos" : `€${shipping.toFixed(2)}`}</span>
+              </div>
+              <div className="mb-4 flex items-center justify-between text-lg font-bold">
+                <span>Gesamtbetrag{shipping === null ? " ohne Versand" : ""}</span>
+                <span className="tabular-nums">€{(subtotal + (shipping ?? 0)).toFixed(2)}</span>
               </div>
               <button
                 type="submit"
                 disabled={pending || items.length === 0}
                 className="w-full bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
-                {pending ? "Anfrage wird gesendet…" : "Kaufanfrage absenden"}
+                {pending ? "Bestellung wird aufgegeben…" : "Jetzt bestellen"}
               </button>
             </div>
 
             <p className="text-xs text-gray-500">
-              Versandkosten und Verfügbarkeit werden persönlich bestätigt. Es erfolgt
-              keine Online-Zahlung; wir kontaktieren Sie zu Versand und Rechnungsstellung.
+              Innerhalb Deutschlands kostet der Versand bei einer Zwischensumme bis einschließlich 57 € 4 €; darüber ist er kostenlos. Für andere Länder werden die Versandkosten nach Annahme der Bestellung berechnet und mitgeteilt. Die Verfügbarkeit wird persönlich bestätigt. Es erfolgt keine Online-Zahlung; wir kontaktieren Sie zur Rechnungsstellung.
             </p>
           </form>
         </section>

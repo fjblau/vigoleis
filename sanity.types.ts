@@ -32,6 +32,8 @@ export type Order = {
     quantity?: number;
     _key: string;
   }>;
+  subtotal?: number;
+  shippingCost?: number;
   total?: number;
   status?: "pending" | "paid" | "fulfilled" | "cancelled";
   customer?: {
