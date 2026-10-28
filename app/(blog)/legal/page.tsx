@@ -4,8 +4,6 @@ import { type PortableTextBlock } from "next-sanity";
 import PortableText from "../portable-text";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { legalNoticeQuery } from "@/sanity/lib/queries";
-import DataRequestForm from "./data-request-form";
-import SelfServiceDataForm from "./self-service-data-form";
 
 export const metadata: Metadata = {
   title: "Impressum",
@@ -32,9 +30,6 @@ export default async function LegalNoticePage() {
           </p>
         </div>
       )}
-
-      <SelfServiceDataForm />
-      <DataRequestForm />
     </div>
   );
 }
