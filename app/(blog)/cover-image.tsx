@@ -15,7 +15,7 @@ export default function CoverImage(props: CoverImageProps) {
       width={2000}
       height={1000}
       alt={source?.alt || ""}
-      src={urlForImage(source)?.height(1000).width(2000).url() as string}
+      src={urlForImage(source)?.height(1000).width(2000).fit("fill").bg("ffffff").url() as string}
       sizes="100vw"
       priority={priority}
     />
