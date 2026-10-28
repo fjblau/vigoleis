@@ -121,7 +121,7 @@ export default async function RootLayout({
                     href="/legal"
                     className="hover:underline transition-colors duration-200"
                   >
-                    Legal Notice
+                    Impressum
                   </Link>
                 </nav>
               </div>
