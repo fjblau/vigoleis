@@ -104,43 +104,43 @@ export default async function ProductPage({ params }: Props) {
         ← Zurück zum Shop
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-        <div className="space-y-4">
+      <div className="grid grid-cols-[72px_minmax(0,1fr)] gap-4 sm:grid-cols-[88px_minmax(0,1fr)] sm:gap-6">
+        <div className="space-y-2">
           {primaryImage?.asset?._ref ? (
-            <div className="relative w-48 max-w-full bg-gray-100 aspect-[3/4] rounded-lg overflow-hidden">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-gray-100">
               <Image
-                className="object-cover"
+                className="object-contain"
                 fill
                 alt={primaryImage.alt || product.title}
                 src={urlForImage(primaryImage)?.width(240).url() as string}
-                sizes="192px"
+                sizes="(max-width: 639px) 72px, 88px"
                 priority
               />
             </div>
           ) : (
-            <div className="flex w-48 max-w-full aspect-[3/4] items-center justify-center bg-gray-100 rounded-lg">
-              <p className="text-gray-500">Kein Bild</p>
+            <div className="flex aspect-[3/4] items-center justify-center rounded-lg bg-gray-100">
+              <p className="text-center text-xs text-gray-500">Kein Bild</p>
             </div>
           )}
 
           {galleryImages.length > 0 && (
-            <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-2">
               {galleryImages.map((image: any, index: number) => (
                 <div
                   key={image.asset?._ref || index}
-                  className="relative bg-gray-100 aspect-square rounded-lg overflow-hidden"
+                  className="relative aspect-square overflow-hidden rounded-lg bg-gray-100"
                 >
                   {image?.asset?._ref ? (
                     <Image
-                      className="object-cover"
+                      className="object-contain"
                       fill
                       alt={image.alt || product.title}
-                      src={urlForImage(image)?.width(400).url() as string}
-                      sizes="(max-width: 1024px) 33vw, 16vw"
+                      src={urlForImage(image)?.width(240).url() as string}
+                      sizes="(max-width: 639px) 72px, 88px"
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">
-                      <p className="text-gray-500 text-xs">Kein Bild</p>
+                      <p className="text-center text-xs text-gray-500">Kein Bild</p>
                     </div>
                   )}
                 </div>
@@ -155,7 +155,7 @@ export default async function ProductPage({ params }: Props) {
               {product.category.title}
             </p>
           )}
-          <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight md:text-5xl">
+          <h1 className="mb-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
             {product.title}
           </h1>
           <p className="mb-6 text-3xl font-bold">
