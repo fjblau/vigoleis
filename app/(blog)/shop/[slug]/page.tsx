@@ -107,18 +107,18 @@ export default async function ProductPage({ params }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         <div className="space-y-4">
           {primaryImage?.asset?._ref ? (
-            <div className="relative bg-gray-100 aspect-[3/4] rounded-lg overflow-hidden">
+            <div className="relative w-48 max-w-full bg-gray-100 aspect-[3/4] rounded-lg overflow-hidden">
               <Image
                 className="object-cover"
                 fill
                 alt={primaryImage.alt || product.title}
-                src={urlForImage(primaryImage)?.width(1200).url() as string}
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                src={urlForImage(primaryImage)?.width(240).url() as string}
+                sizes="192px"
                 priority
               />
             </div>
           ) : (
-            <div className="flex aspect-[3/4] items-center justify-center bg-gray-100 rounded-lg">
+            <div className="flex w-48 max-w-full aspect-[3/4] items-center justify-center bg-gray-100 rounded-lg">
               <p className="text-gray-500">Kein Bild</p>
             </div>
           )}
@@ -162,17 +162,13 @@ export default async function ProductPage({ params }: Props) {
             €{Number(product.price).toFixed(2)}
           </p>
 
-          <div className="mb-8">
-            {outOfStock ? (
+          {outOfStock && (
+            <div className="mb-8">
               <span className="inline-block bg-gray-200 text-gray-700 text-sm font-semibold px-3 py-1 rounded">
                 Nicht vorrätig
               </span>
-            ) : (
-              <span className="inline-block bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded">
-                Auf Anfrage erhältlich
-              </span>
-            )}
-          </div>
+            </div>
+          )}
 
           <div className="mb-8">
             <AddToCart
@@ -185,10 +181,6 @@ export default async function ProductPage({ params }: Props) {
               }}
               disabled={outOfStock}
             />
-            <p className="mt-3 text-sm text-gray-600">
-              Senden Sie an der Kasse eine Kaufanfrage. Wir bestätigen die Versandkosten
-              und vereinbaren die Zahlung per Rechnung; online wird nichts bezahlt.
-            </p>
           </div>
 
           {(product.description?.length ?? 0) > 0 && (
