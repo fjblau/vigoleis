@@ -162,17 +162,13 @@ export default async function ProductPage({ params }: Props) {
             €{Number(product.price).toFixed(2)}
           </p>
 
-          <div className="mb-8">
-            {outOfStock ? (
+          {outOfStock && (
+            <div className="mb-8">
               <span className="inline-block bg-gray-200 text-gray-700 text-sm font-semibold px-3 py-1 rounded">
                 Nicht vorrätig
               </span>
-            ) : (
-              <span className="inline-block bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded">
-                Auf Anfrage erhältlich
-              </span>
-            )}
-          </div>
+            </div>
+          )}
 
           <div className="mb-8">
             <AddToCart
@@ -185,10 +181,6 @@ export default async function ProductPage({ params }: Props) {
               }}
               disabled={outOfStock}
             />
-            <p className="mt-3 text-sm text-gray-600">
-              Senden Sie an der Kasse eine Kaufanfrage. Wir bestätigen die Versandkosten
-              und vereinbaren die Zahlung per Rechnung; online wird nichts bezahlt.
-            </p>
           </div>
 
           {(product.description?.length ?? 0) > 0 && (
