@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const shopProductsQuery = defineQuery(`
-  *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(title asc) {
+  *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(defined(sortOrder) desc, sortOrder asc, title asc, _id asc) {
     _id,
     "title": coalesce(title, "Produkt ohne Titel"),
     "slug": slug.current,

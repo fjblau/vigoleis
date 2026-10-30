@@ -837,6 +837,13 @@
         },
         "optional": true
       },
+      "sortOrder": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
+      },
       "inventory": {
         "type": "objectAttribute",
         "value": {
