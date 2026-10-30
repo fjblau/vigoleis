@@ -5,7 +5,7 @@ import CartIndicator from "./cart-indicator";
 
 export default function Header() {
   return (
-    <header className="border-b border-accent-2 bg-white">
+    <header className="bg-white">
       <div className="container mx-auto px-5">
         <nav className="flex items-center justify-between py-3">
           <Link href="/" className="shrink-0">
