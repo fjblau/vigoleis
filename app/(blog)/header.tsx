@@ -5,20 +5,20 @@ import CartIndicator from "./cart-indicator";
 
 export default function Header() {
   return (
-    <header className="border-b border-accent-2 bg-white">
+    <header className="bg-white">
       <div className="container mx-auto px-5">
         <nav className="flex items-center justify-between py-3">
-          <Link href="/">
+          <Link href="/" className="shrink-0">
             <Image
               src="/images/sig.png"
               alt="Albert Vigoleis Thelen"
               width={1000}
               height={250}
-              className="h-16 w-auto"
+              className="relative z-10 h-24 w-auto translate-y-6 md:h-32"
               priority
             />
           </Link>
-          <ul className="flex gap-6 text-lg font-medium">
+          <ul className="flex flex-wrap justify-end gap-x-6 gap-y-2 text-lg font-medium">
             <li>
               <Link
                 href="/"
