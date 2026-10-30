@@ -8,7 +8,7 @@ export default function Header() {
     <header className="border-b border-accent-2 bg-white">
       <div className="container mx-auto px-5">
         <nav className="flex items-center justify-between py-3">
-          <Link href="/">
+          <Link href="/" className="shrink-0">
             <Image
               src="/images/sig.png"
               alt="Albert Vigoleis Thelen"
@@ -18,7 +18,7 @@ export default function Header() {
               priority
             />
           </Link>
-          <ul className="flex gap-6 text-lg font-medium">
+          <ul className="flex flex-wrap justify-end gap-x-6 gap-y-2 text-lg font-medium">
             <li>
               <Link
                 href="/"
