@@ -82,7 +82,7 @@ export default async function RootLayout({
   const { isEnabled: isDraftMode } = await draftMode();
 
   return (
-    <html lang="en" className={`${inter.variable} bg-white text-black`}>
+    <html lang="en" className={`${inter.variable} bg-gray-50 text-black`}>
       <body>
         <section className="min-h-screen">
           {isDraftMode && <AlertBanner />}
@@ -93,7 +93,7 @@ export default async function RootLayout({
               <div className="container mx-auto px-5">
                 {footer.length > 0 ? (
                   <PortableText
-                    className="prose-sm text-pretty bottom-0 w-full max-w-none bg-white py-12 text-center md:py-20"
+                    className="prose-sm text-pretty bottom-0 w-full max-w-none bg-gray-50 py-12 text-center md:py-20"
                     value={footer as PortableTextBlock[]}
                   />
                 ) : (
