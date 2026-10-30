@@ -14,7 +14,7 @@ export default function Header() {
               alt="Albert Vigoleis Thelen"
               width={1000}
               height={250}
-              className="h-16 w-auto"
+              className="relative z-10 h-24 w-auto translate-y-6 md:h-32"
               priority
             />
           </Link>
