@@ -131,6 +131,7 @@ export type Product = {
     _weak?: boolean;
     [internalGroqTypeReferenceTo]?: "category";
   };
+  sortOrder?: number;
   inventory?: number;
   published?: boolean;
 };
@@ -858,7 +859,7 @@ export type ProductSlugsResult = Array<{
 
 // Source: ./app/(blog)/shop/page.tsx
 // Variable: shopProductsQuery
-// Query: *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(title asc) {    _id,    "title": coalesce(title, "Produkt ohne Titel"),    "slug": slug.current,    price,    "image": images[0] { asset, alt, hotspot, crop },    "category": category->{ _id, title },    description[] { _type, children[] { text } },    inventory  }
+// Query: *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(defined(sortOrder) desc, sortOrder asc, title asc, _id asc) {    _id,    "title": coalesce(title, "Produkt ohne Titel"),    "slug": slug.current,    price,    "image": images[0] { asset, alt, hotspot, crop },    "category": category->{ _id, title },    description[] { _type, children[] { text } },    inventory  }
 export type ShopProductsQueryResult = Array<{
   _id: string;
   title: string | "Produkt ohne Titel";
@@ -1292,7 +1293,7 @@ export type PostQueryResult = {
   } | null;
 } | null;
 // Variable: productsQuery
-// Query: *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(title asc) {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled product"),  "slug": slug.current,  price,  "image": images[0] { asset, alt, hotspot, crop },  "category": category->{ title, "slug": slug.current },  inventory,  published  }
+// Query: *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(defined(sortOrder) desc, sortOrder asc, title asc, _id asc) {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled product"),  "slug": slug.current,  price,  "image": images[0] { asset, alt, hotspot, crop },  "category": category->{ title, "slug": slug.current },  inventory,  published  }
 export type ProductsQueryResult = Array<{
   _id: string;
   status: "draft" | "published";
@@ -1587,7 +1588,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     "*[_type == \"post\" && defined(slug.current)]{\"slug\": slug.current}": PostSlugsResult;
     "*[_type == \"product\" && defined(slug.current) && coalesce(published, true)]{\"slug\": slug.current}": ProductSlugsResult;
-    "\n  *[_type == \"product\" && defined(slug.current) && coalesce(published, true)] | order(title asc) {\n    _id,\n    \"title\": coalesce(title, \"Produkt ohne Titel\"),\n    \"slug\": slug.current,\n    price,\n    \"image\": images[0] { asset, alt, hotspot, crop },\n    \"category\": category->{ _id, title },\n    description[] { _type, children[] { text } },\n    inventory\n  }\n": ShopProductsQueryResult;
+    "\n  *[_type == \"product\" && defined(slug.current) && coalesce(published, true)] | order(defined(sortOrder) desc, sortOrder asc, title asc, _id asc) {\n    _id,\n    \"title\": coalesce(title, \"Produkt ohne Titel\"),\n    \"slug\": slug.current,\n    price,\n    \"image\": images[0] { asset, alt, hotspot, crop },\n    \"category\": category->{ _id, title },\n    description[] { _type, children[] { text } },\n    inventory\n  }\n": ShopProductsQueryResult;
     "*[_type == \"settings\"][0]": SettingsQueryResult;
     "*[_type == \"dictionary\"][0]": DictionaryQueryResult;
     "*[_type == \"privacyPolicy\"][0]{ title, body }": PrivacyPolicyQueryResult;
@@ -1599,7 +1600,7 @@ declare module "@sanity/client" {
     "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": HeroQueryResult;
     "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": MoreStoriesQueryResult;
     "\n  *[_type == \"post\" && slug.current == $slug] [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": PostQueryResult;
-    "\n  *[_type == \"product\" && defined(slug.current) && coalesce(published, true)] | order(title asc) {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled product\"),\n  \"slug\": slug.current,\n  price,\n  \"image\": images[0] { asset, alt, hotspot, crop },\n  \"category\": category->{ title, \"slug\": slug.current },\n  inventory,\n  published\n\n  }\n": ProductsQueryResult;
+    "\n  *[_type == \"product\" && defined(slug.current) && coalesce(published, true)] | order(defined(sortOrder) desc, sortOrder asc, title asc, _id asc) {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled product\"),\n  \"slug\": slug.current,\n  price,\n  \"image\": images[0] { asset, alt, hotspot, crop },\n  \"category\": category->{ title, \"slug\": slug.current },\n  inventory,\n  published\n\n  }\n": ProductsQueryResult;
     "\n  *[_type == \"product\" && slug.current == $slug && coalesce(published, true)] [0] {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled product\"),\n  \"slug\": slug.current,\n  price,\n  \"image\": images[0] { asset, alt, hotspot, crop },\n  \"category\": category->{ title, \"slug\": slug.current },\n  inventory,\n  published\n,\n    description[],\n    \"images\": images[] { asset, alt, hotspot, crop }\n  }\n": ProductBySlugQueryResult;
     "*[_type == \"customer\" && lower(email) == $email][0]{ _id, name, email, phone }": CustomerByEmailQueryResult;
     "\n  *[_type == \"product\" && _id in $ids && coalesce(published, true)]{\n    _id,\n    title,\n    price,\n    inventory,\n    published\n  }\n": ProductPricesByIdsQueryResult;

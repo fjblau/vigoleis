@@ -116,7 +116,7 @@ const productCardFields = /* groq */ `
 `;
 
 export const productsQuery = defineQuery(`
-  *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(title asc) {
+  *[_type == "product" && defined(slug.current) && coalesce(published, true)] | order(defined(sortOrder) desc, sortOrder asc, title asc, _id asc) {
     ${productCardFields}
   }
 `);

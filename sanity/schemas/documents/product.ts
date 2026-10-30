@@ -79,6 +79,14 @@ export default defineType({
       to: [{ type: categoryType.name }],
     }),
     defineField({
+      name: "sortOrder",
+      title: "Manual sort order",
+      type: "number",
+      description:
+        "Lower numbers appear first in the shop, including when filtering by category. Products without a number appear last.",
+      validation: (rule) => rule.min(0).precision(0),
+    }),
+    defineField({
       name: "inventory",
       title: "Inventory / Stock",
       type: "number",
@@ -94,6 +102,21 @@ export default defineType({
         "Uncheck to remove this product from the storefront without deleting the record.",
       initialValue: true,
     }),
+  ],
+  orderings: [
+    {
+      name: "manualSortOrder",
+      title: "Manual sort order",
+      by: [
+        { field: "sortOrder", direction: "asc" },
+        { field: "title", direction: "asc" },
+      ],
+    },
+    {
+      name: "titleAsc",
+      title: "Title A–Z",
+      by: [{ field: "title", direction: "asc" }],
+    },
   ],
   preview: {
     select: {
