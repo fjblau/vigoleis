@@ -1,6 +1,7 @@
 import { PackageIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+import { defaultBlockStyles } from "../blockquoteStyle";
 import categoryType from "./category";
 
 export default defineType({
@@ -37,7 +38,7 @@ export default defineType({
       name: "description",
       title: "Description",
       type: "array",
-      of: [{ type: "block" }],
+      of: [{ type: "block", styles: defaultBlockStyles }],
     }),
     defineField({
       name: "images",

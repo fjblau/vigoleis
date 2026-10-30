@@ -2,6 +2,7 @@ import { DocumentTextIcon } from "@sanity/icons";
 import { format, parseISO } from "date-fns";
 import { defineField, defineType } from "sanity";
 
+import { defaultBlockStyles } from "../blockquoteStyle";
 import authorType from "./author";
 import categoryType from "./category";
 
@@ -33,7 +34,7 @@ export default defineType({
       name: "content",
       title: "Content",
       type: "array",
-      of: [{ type: "block" }],
+      of: [{ type: "block", styles: defaultBlockStyles }],
     }),
     defineField({
       name: "excerpt",
