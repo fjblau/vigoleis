@@ -3,6 +3,8 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 
 import * as demo from "@/sanity/lib/demo";
 
+import { defaultBlockStyles } from "../blockquoteStyle";
+
 export default defineType({
   name: "settings",
   title: "Settings",
@@ -95,6 +97,7 @@ export default defineType({
       of: [
         defineArrayMember({
           type: "block",
+          styles: defaultBlockStyles,
           marks: {
             annotations: [
               {
