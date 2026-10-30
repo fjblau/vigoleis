@@ -125,9 +125,11 @@ export default defineType({
       media: "images[0]",
       category: "category.title",
       published: "published",
+      sortOrder: "sortOrder",
     },
-    prepare({ title, price, media, category, published }) {
+    prepare({ title, price, media, category, published, sortOrder }) {
       const subtitle = [
+        sortOrder != null ? `Order ${sortOrder}` : null,
         category,
         price != null ? `€${Number(price).toFixed(2)}` : null,
         published ? "Published" : "Unpublished",
