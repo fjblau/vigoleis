@@ -173,14 +173,14 @@ export default function GalleryClient({ categories }: GalleryClientProps) {
             role="dialog"
             aria-modal="true"
             aria-label="Photo viewer"
-            className="relative z-10 flex max-h-full w-full max-w-5xl flex-col"
+            className="relative z-10 flex h-full max-h-full w-full max-w-5xl flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={close}
               aria-label="Close"
-              className="absolute -top-2 right-0 z-10 -translate-y-full text-3xl text-white hover:opacity-70"
+              className="absolute right-2 top-2 z-10 text-3xl text-white hover:opacity-70"
             >
               &times;
             </button>
