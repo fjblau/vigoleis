@@ -245,10 +245,67 @@ export type Bibliography = {
   _updatedAt: string;
   _rev: string;
   title?: string;
+  intro?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  moreLabel?: string;
   sections?: Array<{
+    number?: string;
     heading?: string;
+    details?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
     subsections?: Array<{
+      number?: string;
       heading?: string;
+      details?: Array<{
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }>;
       entries?: Array<{
         title?: string;
         year?: string;
@@ -260,6 +317,24 @@ export type Bibliography = {
       _key: string;
     }>;
     _type: "section";
+    _key: string;
+  }>;
+  footer?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
     _key: string;
   }>;
 };
@@ -1106,19 +1181,97 @@ export type LinksEphemeraQueryResult = {
   }> | null;
 } | null;
 // Variable: bibliographyQuery
-// Query: *[_type == "bibliography"][0]{  title,  sections[]{    heading,    subsections[]{      heading,      entries[]{        title,        year,        description      }    }  }}
+// Query: *[_type == "bibliography"][0]{  title,  intro,  moreLabel,  sections[]{    _key,    number,    heading,    details,    subsections[]{      _key,      number,      heading,      details,      entries[]{        _key,        title,        year,        description      }    }  },  footer}
 export type BibliographyQueryResult = {
   title: string | null;
+  intro: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  moreLabel: string | null;
   sections: Array<{
+    _key: string;
+    number: string | null;
     heading: string | null;
+    details: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }> | null;
     subsections: Array<{
+      _key: string;
+      number: string | null;
       heading: string | null;
+      details: Array<{
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }> | null;
       entries: Array<{
+        _key: string;
         title: string | null;
         year: string | null;
         description: string | null;
       }> | null;
     }> | null;
+  }> | null;
+  footer: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
   }> | null;
 } | null;
 // Variable: galleryQuery
@@ -1595,7 +1748,7 @@ declare module "@sanity/client" {
     "*[_type == \"terms\"][0]{ title, body }": TermsQueryResult;
     "*[_type == \"legalNotice\"][0]{ title, body }": LegalNoticeQueryResult;
     "*[_type == \"linksEphemera\"][0]{\n  title,\n  description,\n  categories[]{\n    categoryTitle,\n    categoryDescription,\n    links[]{\n      title,\n      url,\n      description,\n      image{\n        asset,\n        alt,\n        hotspot,\n        crop\n      }\n    }\n  }\n}": LinksEphemeraQueryResult;
-    "*[_type == \"bibliography\"][0]{\n  title,\n  sections[]{\n    heading,\n    subsections[]{\n      heading,\n      entries[]{\n        title,\n        year,\n        description\n      }\n    }\n  }\n}": BibliographyQueryResult;
+    "*[_type == \"bibliography\"][0]{\n  title,\n  intro,\n  moreLabel,\n  sections[]{\n    _key,\n    number,\n    heading,\n    details,\n    subsections[]{\n      _key,\n      number,\n      heading,\n      details,\n      entries[]{\n        _key,\n        title,\n        year,\n        description\n      }\n    }\n  },\n  footer\n}": BibliographyQueryResult;
     "*[_type == \"gallery\"][0]{\n  title,\n  description,\n  categories[]{\n    categoryTitle,\n    photos[]{\n      image{\n        asset,\n        alt,\n        hotspot,\n        crop\n      },\n      caption,\n      album\n    }\n  }\n}": GalleryQueryResult;
     "\n  *[_type == \"post\" && defined(slug.current)] | order(date desc, _updatedAt desc) [0] {\n    content,\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": HeroQueryResult;
     "\n  *[_type == \"post\" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  \"status\": select(_originalId in path(\"drafts.**\") => \"draft\", \"published\"),\n  \"title\": coalesce(title, \"Untitled\"),\n  \"slug\": slug.current,\n  excerpt,\n  coverImage {\n    asset,\n    alt,\n    hotspot,\n    crop\n  },\n  \"date\": coalesce(date, _updatedAt),\n  \"author\": author->{\"name\": coalesce(name, \"Anonymous\"), picture},\n\n  }\n": MoreStoriesQueryResult;

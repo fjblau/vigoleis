@@ -1,6 +1,22 @@
 import { BookIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+const richText = [
+  defineArrayMember({
+    type: "block",
+    marks: {
+      annotations: [
+        {
+          name: "link",
+          type: "object",
+          title: "Link",
+          fields: [{ name: "href", type: "url", title: "URL" }],
+        },
+      ],
+    },
+  }),
+];
+
 export default defineType({
   name: "bibliography",
   title: "Bibliography",
@@ -15,6 +31,19 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "intro",
+      title: "Introduction",
+      type: "array",
+      description: "Text above the numbered bibliography sections.",
+      of: richText,
+    }),
+    defineField({
+      name: "moreLabel",
+      title: "Expand label",
+      type: "string",
+      initialValue: "mehr",
+    }),
+    defineField({
       name: "sections",
       title: "Sections",
       type: "array",
@@ -26,10 +55,22 @@ export default defineType({
           title: "Section",
           fields: [
             defineField({
+              name: "number",
+              title: "Section number",
+              type: "string",
+              description: "Optional Roman numeral, e.g. I or II. Defaults to its position.",
+            }),
+            defineField({
               name: "heading",
               title: "Heading",
               type: "string",
               validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "details",
+              title: "Content revealed by 'mehr'",
+              type: "array",
+              of: richText,
             }),
             defineField({
               name: "subsections",
@@ -42,10 +83,22 @@ export default defineType({
                   title: "Subsection",
                   fields: [
                     defineField({
+                      name: "number",
+                      title: "Subsection number",
+                      type: "string",
+                      description: "Optional number, e.g. 1 or 2. Defaults to its position.",
+                    }),
+                    defineField({
                       name: "heading",
                       title: "Heading",
                       type: "string",
                       description: "Optional; leave empty for entries listed directly under the section.",
+                    }),
+                    defineField({
+                      name: "details",
+                      title: "Content revealed by 'mehr'",
+                      type: "array",
+                      of: richText,
                     }),
                     defineField({
                       name: "entries",
@@ -107,6 +160,13 @@ export default defineType({
           },
         }),
       ],
+    }),
+    defineField({
+      name: "footer",
+      title: "Text below the bibliography",
+      type: "array",
+      description: "For example, a secondary-literature credit or link.",
+      of: richText,
     }),
   ],
   preview: {
