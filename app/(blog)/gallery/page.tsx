@@ -41,12 +41,7 @@ export default async function GalleryPage() {
         .map((photo) => {
           const image = photo.image!;
           return {
-            thumbUrl:
-              (urlForImage(image)
-                ?.width(600)
-                .height(600)
-                .fit("crop")
-                .url() as string) ?? "",
+            thumbUrl: (urlForImage(image)?.width(600).url() as string) ?? "",
             fullUrl: (urlForImage(image)?.width(1600).url() as string) ?? "",
             alt: image.alt || photo.caption || categoryTitle,
             caption: photo.caption || "",
